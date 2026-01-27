@@ -45,7 +45,10 @@ public class players {
 	}
 
 	public static void saveBets(players[] allPlayers) {
+		
 		try {
+			
+			new File("player_bets.txt").createNewFile();
 			FileWriter writer = new FileWriter("player_bets.txt");
 			for (players p : allPlayers) {
 				if (!p.nick.equals("Dealer")) {
@@ -61,6 +64,7 @@ public class players {
 	public static void loadBets(players[] allPlayers, Controller ctrl) {
 
 		try {
+			System.out.println("Current directory = " + System.getProperty("user.dir"));
 			Scanner fileScanner = new Scanner(new File("player_bets.txt"));
 
 			while (fileScanner.hasNextLine()) {

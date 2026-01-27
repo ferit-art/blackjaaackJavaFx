@@ -16,6 +16,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
+// Note: saveBets, loadBets and resetGame methods are not functional yet.
+// Filehandling should be looked up and saveBets should be corrected.
+// Allthough currentPlayerIndex(int) seems to work, it is not a reliable solution.
+// Work in progress as of latest: EventListeners to the double down and stand buttons, including the implamentation of the code from the previous version.
+
 public class Controller {
 
 	// UI subjects
@@ -140,7 +145,6 @@ public class Controller {
 					setButton.setVisible(false);
 					betInput.setVisible(false);
 					consoleLabel.setText("All bets set. Ready to play!");
-					currentPlayerIndex = 0;
 				}
 			} else {
 				consoleLabel.setText("The bet must be at least 1.");
@@ -273,13 +277,13 @@ public class Controller {
 		currentPlayerIndex = -1;
 
 		try (FileWriter writer = new FileWriter("player_bets.txt", false)) {
-	        writer.write("");           // ← empty file
-	        writer.flush();
-	    } catch (Exception ignored) {
-	    }
-		
+			writer.write(""); // ← empty file
+			writer.flush();
+		} catch (Exception ignored) {
+		}
+
 		try {
-			new java.io.File("player_bets.txt").delete(); 
+			new java.io.File("player_bets.txt").delete();
 		} catch (Exception ignored) {
 			System.out.println("crash");
 		}
