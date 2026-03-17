@@ -16,10 +16,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
-// Note: saveBets, loadBets and resetGame methods are not functional yet.
+// Note: saveBets, loadBets and resetGame methods are not fully functional yet.
 // Filehandling should be looked up and saveBets should be corrected.
 // Allthough currentPlayerIndex(int) seems to work, it is not a reliable solution.
-// Work in progress as of latest: EventListeners to the double down and stand buttons, including the implamentation of the code from the previous version.
+// Work in progress as of late: EventListeners to the double down and stand buttons, including the implamentation of the code from the previous version.
 
 public class Controller {
 
@@ -53,6 +53,7 @@ public class Controller {
 	Button splitButton;
 
 	// Event handlers
+	
 	public void sliderNumPlayers(MouseEvent e) {
 		Slider sliderNumPlayers = (Slider) e.getSource();
 		players.numPlayers = (int) sliderNumPlayers.getValue();
@@ -69,7 +70,7 @@ public class Controller {
 		players.allPlayers = new players[0];
 	}
 
-	private int currentPlayerIndex = 0;
+	private int currentPlayerIndex = -1;
 
 	public void understand(ActionEvent e) throws IOException {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("scene2.fxml")); // Same thing as switchScene, but
@@ -81,25 +82,30 @@ public class Controller {
 
 		Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
 		Scene scene = new Scene(root);
-		stage.setScene(scene);
+		stage.setScene(scene);ctrl.currentPlayerIndex = 0;
 		stage.show();
 
 		players.allPlayers = new players[players.numPlayers + 1]; // +1 for the dealer
 
-		for (int i = 0; i < players.numPlayers; i++) {
-			players.allPlayers[i] = new players();
-			players.allPlayers[i].nick = "Player " + (i + 1);
+		for (int i = 0; i <= players.numPlayers; i++) {
+			
+			if (i == players.numPlayers) {
+				players.allPlayers[i] = new players();
+				players.allPlayers[i].nick = "Dealer";
+				
+			} else {
+				players.allPlayers[i] = new players();
+				players.allPlayers[i].nick = "Player " + (i + 1);
+			}
 		}
-
-		players.allPlayers[players.numPlayers] = new players();
-		players.allPlayers[players.numPlayers].nick = "Dealer";
 
 		resources.setup();
 
 		players.loadBets(players.allPlayers, ctrl);
 
+		ctrl.currentPlayerIndex = 0;
+		
 		while (ctrl.currentPlayerIndex < players.numPlayers && players.allPlayers[ctrl.currentPlayerIndex].bet != 0) {
-
 			ctrl.currentPlayerIndex++;
 		}
 
@@ -216,6 +222,21 @@ public class Controller {
 		} else {
 			players.currentPlayer++;
 		}
+	}
+
+	public void doubleAction(ActionEvent e) {
+		players player = players.allPlayers[players.currentPlayer];
+		resources.doubleDown(player);
+
+		String output = player.nick + " doubled down!";
+
+		output += player.nick + "'s bet now is " + player.bet;
+		resources.hit(player, player.deck);
+	}
+
+	public void standAction(ActionEvent e) {
+		players player = players.allPlayers[players.currentPlayer];
+		resources.stand(player, player.score);
 	}
 
 	public void goBack(ActionEvent e) throws IOException {

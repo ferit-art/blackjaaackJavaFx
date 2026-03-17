@@ -36,7 +36,7 @@
             <Font name="DejaVu Serif Bold" size="20.0" />
          </font>
       </Button>
-      <Button layoutX="558.0" layoutY="519.0" mnemonicParsing="false" text="DOUBLE DOWN">
+      <Button fx:id="doubleButton" layoutX="558.0" layoutY="518.0" mnemonicParsing="false" onAction="#doubleAction" text="DOUBLE DOWN">
          <font>
             <Font name="System Bold" size="11.0" />
          </font>
@@ -46,7 +46,7 @@
             <Font name="System Bold" size="12.0" />
          </font>
       </Button>
-      <Button layoutX="574.0" layoutY="555.0" mnemonicParsing="false" text="STAND" textAlignment="CENTER">
+      <Button fx:id="standButton" layoutX="576.0" layoutY="553.0" mnemonicParsing="false" onAction="#standAction" text="STAND" textAlignment="CENTER">
          <font>
             <Font name="System Bold" size="13.0" />
          </font>
@@ -59,14 +59,14 @@
       <Line endX="57.0" endY="42.0" layoutX="525.0" layoutY="463.0" startX="57.0" startY="17.5" />
       <Line endX="57.5" endY="42.0" layoutX="525.0" layoutY="463.0" startX="105.0" startY="42.0" />
       <Line endX="105.25" endY="41.0" layoutX="525.0" layoutY="463.0" startX="105.25" startY="17.25" />
-      <Line endX="33.0" endY="73.0" layoutX="525.0" layoutY="470.0" startX="33.0" startY="49.0" />
-      <Line endX="33.0" endY="49.0" layoutX="525.0" layoutY="470.0" startX="130.25" startY="49.0" />
-      <Line endX="33.5" endY="72.75" layoutX="525.0" layoutY="470.0" startX="130.25" startY="72.75" />
-      <Line endX="130.75" endY="72.5" layoutX="525.0" layoutY="470.0" startX="130.75" startY="49.5" />
-      <Line endX="52.5" endY="106.0" layoutX="522.0" layoutY="474.0" startX="52.5" startY="81.75" />
-      <Line endX="52.75" endY="81.75" layoutX="522.0" layoutY="474.0" startX="113.25" startY="81.75" />
-      <Line endX="53.0" endY="107.0" layoutX="522.0" layoutY="474.0" startX="113.25" startY="107.0" />
-      <Line endX="113.75" endY="106.5" layoutX="522.0" layoutY="474.0" startX="113.75" startY="82.0" />
+      <Line endX="33.0" endY="73.0" layoutX="525.0" layoutY="469.0" startX="33.0" startY="49.0" />
+      <Line endX="33.0" endY="49.0" layoutX="525.0" layoutY="469.0" startX="130.25" startY="49.0" />
+      <Line endX="33.5" endY="72.75" layoutX="525.0" layoutY="469.0" startX="130.25" startY="72.75" />
+      <Line endX="130.75" endY="72.5" layoutX="525.0" layoutY="469.0" startX="130.75" startY="49.5" />
+      <Line endX="52.5" endY="106.0" layoutX="524.0" layoutY="472.0" startX="52.5" startY="81.75" />
+      <Line endX="52.75" endY="81.75" layoutX="524.0" layoutY="472.0" startX="113.25" startY="81.75" />
+      <Line endX="53.0" endY="107.0" layoutX="524.0" layoutY="472.0" startX="113.25" startY="107.0" />
+      <Line endX="113.75" endY="106.5" layoutX="524.0" layoutY="472.0" startX="113.75" startY="82.0" />
       <ImageView fitHeight="151.0" fitWidth="102.0" layoutX="554.0" layoutY="54.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../Special%20cards/Hearts/Queen%20of%20hearts.png" />
