@@ -82,7 +82,7 @@ public class players {
 					}
 				}
 			}
-			ctrl.consoleLabel.setText("Previous bets loaded.");
+			ctrl.betLabel.setText("Previous bets loaded.");
 			fileScanner.close();
 
 		} catch (FileNotFoundException e) {

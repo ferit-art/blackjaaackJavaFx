@@ -12,7 +12,7 @@
          <font>
             <Font size="15.0" />
          </font></Button>
-      <Label fx:id="consoleLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="353.0" layoutY="378.0" prefHeight="152.0" prefWidth="494.0" styleClass="application.css" textAlignment="CENTER" wrapText="true">
+      <Label fx:id="betLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="353.0" layoutY="378.0" prefHeight="152.0" prefWidth="494.0" styleClass="application.css" textAlignment="CENTER" wrapText="true">
          <font>
             <Font name="Hack Bold" size="13.0" />
          </font>

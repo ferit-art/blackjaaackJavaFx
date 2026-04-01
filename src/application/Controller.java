@@ -28,7 +28,7 @@ public class Controller {
 	@FXML
 	ScrollPane consoleScrollPane;
 	@FXML
-	Label consoleLabel;
+	Label betLabel;
 	@FXML
 	Label consoleLog;
 	@FXML
@@ -53,7 +53,7 @@ public class Controller {
 	Button splitButton;
 
 	// Event handlers
-	
+
 	public void sliderNumPlayers(MouseEvent e) {
 		Slider sliderNumPlayers = (Slider) e.getSource();
 		players.numPlayers = (int) sliderNumPlayers.getValue();
@@ -82,17 +82,18 @@ public class Controller {
 
 		Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
 		Scene scene = new Scene(root);
-		stage.setScene(scene);ctrl.currentPlayerIndex = 0;
+		stage.setScene(scene);
+		ctrl.currentPlayerIndex = 0;
 		stage.show();
 
 		players.allPlayers = new players[players.numPlayers + 1]; // +1 for the dealer
 
 		for (int i = 0; i <= players.numPlayers; i++) {
-			
+
 			if (i == players.numPlayers) {
 				players.allPlayers[i] = new players();
 				players.allPlayers[i].nick = "Dealer";
-				
+
 			} else {
 				players.allPlayers[i] = new players();
 				players.allPlayers[i].nick = "Player " + (i + 1);
@@ -104,18 +105,18 @@ public class Controller {
 		players.loadBets(players.allPlayers, ctrl);
 
 		ctrl.currentPlayerIndex = 0;
-		
+
 		while (ctrl.currentPlayerIndex < players.numPlayers && players.allPlayers[ctrl.currentPlayerIndex].bet != 0) {
 			ctrl.currentPlayerIndex++;
 		}
 
 		if (ctrl.currentPlayerIndex < players.numPlayers) {
 
-			ctrl.consoleLabel.setText("How much is your bet " + players.allPlayers[ctrl.currentPlayerIndex].nick + "?");
+			ctrl.betLabel.setText("How much is your bet " + players.allPlayers[ctrl.currentPlayerIndex].nick + "?");
 			ctrl.betInput.setVisible(true);
 		} else {
 
-			ctrl.consoleLabel.setText("All bets loaded. Ready to play!");
+			ctrl.betLabel.setText("All bets loaded. Ready to play!");
 			ctrl.betInput.setVisible(false);
 		}
 	}
@@ -124,7 +125,7 @@ public class Controller {
 		if (currentPlayerIndex == -1 || currentPlayerIndex >= players.numPlayers) {
 			nextButton.setVisible(true);
 			setButton.setVisible(false);
-			return; // No more players need bets
+			return; // No more players need to set bets
 		}
 
 		try {
@@ -143,21 +144,21 @@ public class Controller {
 
 				if (currentPlayerIndex < players.numPlayers) {
 
-					consoleLabel.setText("How much is your bet " + players.allPlayers[currentPlayerIndex].nick + "?");
+					betLabel.setText("How much is your bet " + players.allPlayers[currentPlayerIndex].nick + "?");
 					betInput.clear();
 				} else {
 
 					nextButton.setVisible(true);
 					setButton.setVisible(false);
 					betInput.setVisible(false);
-					consoleLabel.setText("All bets set. Ready to play!");
+					betLabel.setText("All bets set. Ready to play!");
 				}
 			} else {
-				consoleLabel.setText("The bet must be at least 1.");
+				betLabel.setText("The bet must be at least 1.");
 			}
 		} catch (NumberFormatException ex) {
 
-			consoleLabel.setText("Invalid bet for " + players.allPlayers[currentPlayerIndex].nick
+			betLabel.setText("Invalid bet for " + players.allPlayers[currentPlayerIndex].nick
 					+ ": Enter a valid positive number.");
 		}
 	}
@@ -292,10 +293,9 @@ public class Controller {
 		}
 
 		players.allPlayers = new players[0];
-
 		players.currentPlayer = 0;
-		players.numPlayers = 0;
-		currentPlayerIndex = -1;
+		players.numPlayers = 1; // Because the min amount is 1
+		currentPlayerIndex = -1; // The player amount is not given in the start / game hasn't started yet
 
 		try (FileWriter writer = new FileWriter("player_bets.txt", false)) {
 			writer.write(""); // ← empty file
