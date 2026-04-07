@@ -4,6 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
 
+import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,13 +18,17 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 // Current notes:
 
-// Work in progress as of late: EventListeners to the double down and stand buttons,
-// including the implamentation of the code from the previous version.
+//	Seperate the section between the empty comment rows in Players.java as a new class with the name of 
+//	Player.java and make the necessary adjustments in the rest of the code.
 
-// The automation of hitAction for the Dealer hasn't been corrected, thus DOES NOT work as of current state. 
+// 	EventListeners to the double down and stand buttons,
+// 	including the implamentation of the code from the previous version.
+
+// 	
 
 public class Controller {
 
@@ -60,7 +65,7 @@ public class Controller {
 
 	public void sliderNumPlayers(MouseEvent e) {
 		Slider sliderNumPlayers = (Slider) e.getSource();
-		players.numPlayers = (int) sliderNumPlayers.getValue();
+		Players.numPlayers = (int) sliderNumPlayers.getValue();
 	}
 
 	public void startBtn(ActionEvent e) throws IOException {
@@ -70,7 +75,7 @@ public class Controller {
 	public void notUnderstand(ActionEvent e) throws IOException {
 		sceneController.sceneHistory.clear();
 		sceneController.switchScene(e, "startScene.fxml");
-		players.allPlayers = new players[0];
+		Players.allPlayers = new Players[0];
 	}
 
 	private int currentPlayerIndex = -1;
@@ -89,33 +94,33 @@ public class Controller {
 		ctrl.currentPlayerIndex = 0;
 		stage.show();
 
-		players.allPlayers = new players[players.numPlayers + 1]; // +1 for the dealer
+		Players.allPlayers = new Players[Players.numPlayers + 1]; // +1 for the dealer
 
-		for (int i = 0; i <= players.numPlayers; i++) {
+		for (int i = 0; i <= Players.numPlayers; i++) {
 
-			if (i == players.numPlayers) {
-				players.allPlayers[i] = new players();
-				players.allPlayers[i].nick = "Dealer";
+			if (i == Players.numPlayers) {
+				Players.allPlayers[i] = new Players();
+				Players.allPlayers[i].nick = "Dealer";
 
 			} else {
-				players.allPlayers[i] = new players();
-				players.allPlayers[i].nick = "Player " + (i + 1);
+				Players.allPlayers[i] = new Players();
+				Players.allPlayers[i].nick = "Player " + (i + 1);
 			}
 		}
 
 		resources.setup();
 
-		players.loadBets(players.allPlayers, ctrl);
+		Players.loadBets(Players.allPlayers, ctrl);
 
 		ctrl.currentPlayerIndex = 0;
 
-		while (ctrl.currentPlayerIndex < players.numPlayers && players.allPlayers[ctrl.currentPlayerIndex].bet != 0) {
+		while (ctrl.currentPlayerIndex < Players.numPlayers && Players.allPlayers[ctrl.currentPlayerIndex].bet != 0) {
 			ctrl.currentPlayerIndex++;
 		}
 
-		if (ctrl.currentPlayerIndex < players.numPlayers) {
+		if (ctrl.currentPlayerIndex < Players.numPlayers) {
 
-			ctrl.betLabel.setText("How much is your bet " + players.allPlayers[ctrl.currentPlayerIndex].nick + "?");
+			ctrl.betLabel.setText("How much is your bet " + Players.allPlayers[ctrl.currentPlayerIndex].nick + "?");
 			ctrl.betInput.setVisible(true);
 		} else {
 
@@ -125,7 +130,7 @@ public class Controller {
 	}
 
 	public void setBet(ActionEvent e) {
-		if (currentPlayerIndex == -1 || currentPlayerIndex >= players.numPlayers) {
+		if (currentPlayerIndex == -1 || currentPlayerIndex >= Players.numPlayers) {
 			nextButton.setVisible(true);
 			setButton.setVisible(false);
 			return; // No more players need to set bets
@@ -135,19 +140,19 @@ public class Controller {
 			int betValue = Integer.parseInt(betInput.getText());
 
 			if (betValue >= 1) {
-				players p = players.allPlayers[currentPlayerIndex];
+				Players p = Players.allPlayers[currentPlayerIndex];
 				p.originalBet = betValue;
 				p.bet = p.originalBet;
 
 				currentPlayerIndex++;
 
-				while (currentPlayerIndex < players.numPlayers && players.allPlayers[currentPlayerIndex].bet != 0) {
+				while (currentPlayerIndex < Players.numPlayers && Players.allPlayers[currentPlayerIndex].bet != 0) {
 					currentPlayerIndex++;
 				}
 
-				if (currentPlayerIndex < players.numPlayers) {
+				if (currentPlayerIndex < Players.numPlayers) {
 
-					betLabel.setText("How much is your bet " + players.allPlayers[currentPlayerIndex].nick + "?");
+					betLabel.setText("How much is your bet " + Players.allPlayers[currentPlayerIndex].nick + "?");
 					betInput.clear();
 				} else {
 
@@ -161,13 +166,13 @@ public class Controller {
 			}
 		} catch (NumberFormatException ex) {
 
-			betLabel.setText("Invalid bet for " + players.allPlayers[currentPlayerIndex].nick
+			betLabel.setText("Invalid bet for " + Players.allPlayers[currentPlayerIndex].nick
 					+ ": Enter a valid positive number.");
 		}
 	}
 
 	public void toScene3(ActionEvent e) throws IOException {
-		players.currentPlayer = 0;
+		Players.currentPlayer = 0;
 		sceneController.switchScene(e, "scene3.fxml");
 	}
 
@@ -175,7 +180,7 @@ public class Controller {
 
 	public void hitAction(ActionEvent e) {
 
-		players player = players.allPlayers[players.currentPlayer];
+		Players player = Players.allPlayers[Players.currentPlayer];
 
 		if (!player.nick.equals("Dealer")) {
 			resources.hit(player, player.deck);
@@ -198,32 +203,29 @@ public class Controller {
 			}
 			appendToConsole(output);
 
-			players lastHumanPlayer = players.allPlayers[players.numPlayers - 1]; // Incase of last player
+			Players lastHumanPlayer = Players.allPlayers[Players.numPlayers - 1]; // Incase of last player
 
 			if (player.nick.equals(lastHumanPlayer.nick)) {
-				players dealer = players.allPlayers[players.numPlayers];
+				Players dealer = Players.allPlayers[Players.numPlayers];
 				resources.hit(dealer, dealer.deck);
 
-				String dealerOutput = dealer.nick + " hit!\n";
-
-				dealerOutput += dealer.nick + "'s card this round: " + dealer.card + "\n";
-
-				dealerOutput += "The amount of cards in " + dealer.nick + "'s deck: " + dealer.deck.size() + "\n";
-
-				dealerOutput += "The total value of " + dealer.nick + "'s hand: " + dealer.score + "\n";
+				String dealerOutput = dealer.nick + " hit!\n" + dealer.nick + "'s card this round: " + dealer.card + "\n" + "The amount of cards in " + dealer.nick + "'s deck: " + dealer.deck.size() + "\n" + "The total value of " + dealer.nick + "'s hand: " + dealer.score + "\n";
 				
-				// Thread.sleep / pause for 2 secs here
+				PauseTransition pause = new PauseTransition(Duration.seconds(0.2));
+				pause.setOnFinished(event -> {
+					appendToConsole(dealerOutput);
+					Players.currentPlayer = 0;
+				});
+				pause.play();
 				
-				appendToConsole(dealerOutput);
-				players.currentPlayer = 0;
 			} else {
-				players.currentPlayer++;
+				Players.currentPlayer++;
 			}
 		}
 	}
 
 	public void splitAction(ActionEvent e) {
-		players player = players.allPlayers[players.currentPlayer];
+		Players player = Players.allPlayers[Players.currentPlayer];
 
 		resources.split(player);
 
@@ -236,14 +238,14 @@ public class Controller {
 		appendToConsole(output);
 
 		if (player.nick == "Dealer") {
-			players.currentPlayer = 0;
+			Players.currentPlayer = 0;
 		} else {
-			players.currentPlayer++;
+			Players.currentPlayer++;
 		}
 	}
 
 	public void doubleAction(ActionEvent e) {
-		players player = players.allPlayers[players.currentPlayer];
+		Players player = Players.allPlayers[Players.currentPlayer];
 		resources.doubleDown(player);
 
 		String output = player.nick + " doubled down!";
@@ -253,7 +255,7 @@ public class Controller {
 	}
 
 	public void standAction(ActionEvent e) {
-		players player = players.allPlayers[players.currentPlayer];
+		Players player = Players.allPlayers[Players.currentPlayer];
 		resources.stand(player, player.score);
 	}
 
@@ -285,10 +287,10 @@ public class Controller {
 	}
 
 	private void resetGame() {
-		for (int i = 0; i < players.numPlayers; i++) {
-			players p = players.allPlayers[i];
+		for (int i = 0; i < Players.numPlayers; i++) {
+			Players p = Players.allPlayers[i];
 
-			if (players.allPlayers[i] != null) {
+			if (Players.allPlayers[i] != null) {
 				p.deck.clear();
 				p.splitDeck.clear();
 
@@ -309,9 +311,9 @@ public class Controller {
 			}
 		}
 
-		players.allPlayers = new players[0];
-		players.currentPlayer = 0;
-		players.numPlayers = 1; // Because the min amount is 1
+		Players.allPlayers = new Players[0];
+		Players.currentPlayer = 0;
+		Players.numPlayers = 1; // Because the min amount is 1
 		currentPlayerIndex = -1; // The player amount is not given in the start / game hasn't started yet
 
 		try (FileWriter writer = new FileWriter("player_bets.txt", false)) {

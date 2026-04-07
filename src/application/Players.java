@@ -4,11 +4,13 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class players {
+public class Players {
 	public ArrayList<String> deck = new ArrayList<String>();
 	public ArrayList<String> splitDeck = new ArrayList<String>();
-	public static players[] allPlayers = new players[0]; // +1 for the dealer
+	public static Players[] allPlayers = new Players[0]; // +1 for the dealer
 
+	//
+	
 	public int bet;
 	public int score;
 	public int splitScore;
@@ -25,6 +27,9 @@ public class players {
 	public boolean hasSplit = false;
 	public boolean hasWon = false;
 	public boolean hasDoubledDown = false;
+	
+	//
+	
 	public static int numPlayers = 1; 
 	public static int currentPlayer = 0;
 
@@ -44,12 +49,12 @@ public class players {
 		this.numPlayers = numPlayers;
 	}
 
-	public static void saveBets(players[] allPlayers) {
+	public static void saveBets(Players[] allPlayers) {
 		
 		try {
 			new File("player_bets.txt").createNewFile();
 			FileWriter writer = new FileWriter("player_bets.txt");
-			for (players p : allPlayers) {
+			for (Players p : allPlayers) {
 				if (!p.nick.equals("Dealer")) {
 					writer.write(p.nick + ":" + p.bet + "\n");
 				}
@@ -60,7 +65,7 @@ public class players {
 		}
 	}
 
-	public static void loadBets(players[] allPlayers, Controller ctrl) {
+	public static void loadBets(Players[] allPlayers, Controller ctrl) {
 
 		try {
 			Scanner fileScanner = new Scanner(new File("player_bets.txt"));
@@ -73,7 +78,7 @@ public class players {
 
 				int bet = Integer.parseInt(parts[1]);
 
-				for (players p : allPlayers) {
+				for (Players p : allPlayers) {
 					if (p.nick.equals(playerName)) {
 						p.bet = bet;
 						break;
@@ -97,19 +102,19 @@ public class players {
 		System.out.print("\nHow many players? ");
 		int numPlayers = scanner.nextInt();
 
-		players[] allPlayers = new players[numPlayers + 1]; // +1 for the dealer
+		Players[] allPlayers = new Players[numPlayers + 1]; // +1 for the dealer
 
 		for (int i = 0; i < numPlayers; i++) {
-			allPlayers[i] = new players();
+			allPlayers[i] = new Players();
 			allPlayers[i].nick = "Player " + (i + 1);
 		}
 
-		allPlayers[numPlayers] = new players();
+		allPlayers[numPlayers] = new Players();
 		allPlayers[numPlayers].nick = "Dealer";
 
 		resources.setup();
 
-		for (players p : allPlayers) {
+		for (Players p : allPlayers) {
 
 			if (!p.nick.equals("Dealer")) {
 
@@ -180,7 +185,7 @@ public class players {
 
 			if (!gameActive) { // The results
 
-				ArrayList<players> winners = resources.theWinner(allPlayers);
+				ArrayList<Players> winners = resources.theWinner(allPlayers);
 
 				if (winners.isEmpty()) {
 
@@ -194,7 +199,7 @@ public class players {
 				} else {
 
 					System.out.println("\nIt is tied between:");
-					for (players player : winners) {
+					for (Players player : winners) {
 
 						player.hasWon = true;
 						System.out.println("- " + player.nick);
@@ -203,7 +208,7 @@ public class players {
 			}
 		} // game
 
-		for (players p : allPlayers) { // Consequences
+		for (Players p : allPlayers) { // Consequences
 			if (!p.nick.equals("Dealer")) {
 				if (p.hasWon) {
 					if (p.hasDoubledDown) {
@@ -224,7 +229,7 @@ public class players {
 			}
 		}
 
-		for (players p : allPlayers) { // The change in bet
+		for (Players p : allPlayers) { // The change in bet
 			if (!p.nick.equals("Dealer")) {
 				System.out.println("\n" + p.nick + "'s bet now is: " + p.bet);
 			}
@@ -238,7 +243,7 @@ public class players {
 			saveBets(allPlayers);
 		} else {
 
-			for (players p : allPlayers) {
+			for (Players p : allPlayers) {
 
 				p.bet = 0;
 			}
