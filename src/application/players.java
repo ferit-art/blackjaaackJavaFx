@@ -47,7 +47,6 @@ public class players {
 	public static void saveBets(players[] allPlayers) {
 		
 		try {
-			
 			new File("player_bets.txt").createNewFile();
 			FileWriter writer = new FileWriter("player_bets.txt");
 			for (players p : allPlayers) {
@@ -64,7 +63,6 @@ public class players {
 	public static void loadBets(players[] allPlayers, Controller ctrl) {
 
 		try {
-			System.out.println("Current directory = " + System.getProperty("user.dir"));
 			Scanner fileScanner = new Scanner(new File("player_bets.txt"));
 
 			while (fileScanner.hasNextLine()) {
@@ -89,20 +87,6 @@ public class players {
 		}
 	}
 
-	public static void printInfo(players someone) {
-		System.out.println("\n" + someone.nick + "'s card this round: " + someone.card);
-		System.out.println("The amount of cards in " + someone.nick + "'s deck: " + someone.deck.size());
-		System.out.println("The total value of " + someone.nick + "'s hand: " + someone.score);
-
-		if (someone.hasSplit) {
-
-			System.out.println("\n" + someone.nick + "'s split-card this round: " + someone.splitCard);
-			System.out.println(
-					"The amount of " + someone.nick + "'s cards in the split deck is " + someone.splitDeck.size());
-			System.out.println("The total value of " + someone.nick + "'s split hand: " + someone.splitScore);
-		}
-	}
-
 	public static void Game() {
 		Scanner scanner = new Scanner(System.in);
 
@@ -124,7 +108,6 @@ public class players {
 		allPlayers[numPlayers].nick = "Dealer";
 
 		resources.setup();
-
 
 		for (players p : allPlayers) {
 
@@ -174,7 +157,6 @@ public class players {
 
 						if (allPlayers[i].hasStood == false && allPlayers[i].score >= 17) { // Dealer stands on 17 or
 																							// higher, up to 21
-
 							allPlayers[i].choice = true; // The original deck
 							resources.stand(allPlayers[i], allPlayers[i].score);
 

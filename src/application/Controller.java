@@ -2,6 +2,8 @@ package application;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Iterator;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -16,10 +18,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
-// Note: saveBets, loadBets and resetGame methods are not fully functional yet.
-// Filehandling should be looked up and saveBets should be corrected.
-// Allthough currentPlayerIndex(int) seems to work, it is not a reliable solution.
-// Work in progress as of late: EventListeners to the double down and stand buttons, including the implamentation of the code from the previous version.
+// Current notes:
+
+// Work in progress as of late: EventListeners to the double down and stand buttons,
+// including the implamentation of the code from the previous version.
+
+// The automation of hitAction for the Dealer hasn't been corrected, thus DOES NOT work as of current state. 
 
 public class Controller {
 
@@ -64,7 +68,6 @@ public class Controller {
 	}
 
 	public void notUnderstand(ActionEvent e) throws IOException {
-		resetGame();
 		sceneController.sceneHistory.clear();
 		sceneController.switchScene(e, "startScene.fxml");
 		players.allPlayers = new players[0];
@@ -164,44 +167,58 @@ public class Controller {
 	}
 
 	public void toScene3(ActionEvent e) throws IOException {
+		players.currentPlayer = 0;
 		sceneController.switchScene(e, "scene3.fxml");
 	}
 
 	// Player actions (In-game)
 
 	public void hitAction(ActionEvent e) {
+
 		players player = players.allPlayers[players.currentPlayer];
 
-		resources.hit(player, player.deck);
+		if (!player.nick.equals("Dealer")) {
+			resources.hit(player, player.deck);
 
-		String output = player.nick + " hit!\n";
+			String output = player.nick + " hit!\n";
 
-		output += player.nick + "'s card this round: " + player.card + "\n";
+			output += player.nick + "'s card this round: " + player.card + "\n";
 
-		output += "The amount of cards in " + player.nick + "'s deck: " + player.deck.size() + "\n";
+			output += "The amount of cards in " + player.nick + "'s deck: " + player.deck.size() + "\n";
 
-		output += "The total value of " + player.nick + "'s hand: " + player.score + "\n";
+			output += "The total value of " + player.nick + "'s hand: " + player.score + "\n";
 
-		if (player.hasSplit) {
-			output += player.nick + "'s split-card this round: " + player.splitCard + "\n";
+			if (player.hasSplit) {
+				output += player.nick + "'s split-card this round: " + player.splitCard + "\n";
 
-			output += "The amount of " + player.nick + "'s cards in the splitted deck is " + player.splitDeck.size()
-					+ "\n";
+				output += "The amount of " + player.nick + "'s cards in the splitted deck is " + player.splitDeck.size()
+						+ "\n";
 
-			output += "The total value of " + player.nick + "'s split hand: " + player.splitScore + "\n";
+				output += "The total value of " + player.nick + "'s split hand: " + player.splitScore + "\n";
+			}
+			appendToConsole(output);
 
-		}
+			players lastHumanPlayer = players.allPlayers[players.numPlayers - 1]; // Incase of last player
 
-		if (player.nick != "Dealer") {
+			if (player.nick.equals(lastHumanPlayer.nick)) {
+				players dealer = players.allPlayers[players.numPlayers];
+				resources.hit(dealer, dealer.deck);
 
-		}
+				String dealerOutput = dealer.nick + " hit!\n";
 
-		appendToConsole(output);
+				dealerOutput += dealer.nick + "'s card this round: " + dealer.card + "\n";
 
-		if (player.nick == "Dealer") {
-			players.currentPlayer = 0;
-		} else {
-			players.currentPlayer++;
+				dealerOutput += "The amount of cards in " + dealer.nick + "'s deck: " + dealer.deck.size() + "\n";
+
+				dealerOutput += "The total value of " + dealer.nick + "'s hand: " + dealer.score + "\n";
+				
+				// Thread.sleep / pause for 2 secs here
+				
+				appendToConsole(dealerOutput);
+				players.currentPlayer = 0;
+			} else {
+				players.currentPlayer++;
+			}
 		}
 	}
 

@@ -39,61 +39,61 @@ public class resources {
 
 	// Actions
 
-	public static void hit(players someone, ArrayList<String> deck) {
+	public static void hit(players player, ArrayList<String> deck) {
 
-		if (!someone.hasStood) {
+		if (!player.hasStood) {
 
 			Random random0 = new Random();
-			someone.card = allCards.get(random0.nextInt(allCards.size()));
+			player.card = allCards.get(random0.nextInt(allCards.size()));
 		}
-		if (someone.hasSplit && !someone.splitHasStood) {
+		if (player.hasSplit && !player.splitHasStood) {
 			Random random1 = new Random();
-			someone.splitCard = allCards.get(random1.nextInt(allCards.size()));
+			player.splitCard = allCards.get(random1.nextInt(allCards.size()));
 		}
-		addCard(someone, deck);
+		addCard(player, deck);
 	}
 
-	public static void stand(players someone, int score) {
+	public static void stand(players player, int score) {
 
-		if (someone.nick.equals("Dealer")) {
-			someone.hasStood = true;
-			System.out.println("\n" + someone.nick + " stands with " + score + " as the total value");
+		if (player.nick.equals("Dealer")) {
+			player.hasStood = true;
+			System.out.println("\n" + player.nick + " stands with " + score + " as the total value");
 
 		} else {
-			if (someone.splitChoice) {
-				someone.splitHasStood = true;
+			if (player.splitChoice) {
+				player.splitHasStood = true;
 				System.out.println(
-						"\n" + someone.nick + " stands with " + score + " as the total value for the split hand");
+						"\n" + player.nick + " stands with " + score + " as the total value for the split hand");
 			} else {
-				someone.hasStood = true;
-				System.out.println("\n" + someone.nick + " stands with " + score + " as the total value");
+				player.hasStood = true;
+				System.out.println("\n" + player.nick + " stands with " + score + " as the total value");
 			}
 		}
 	}
 
-	public static boolean doubleDown(players someone) {
-		if (someone.originalBet == 0) {
-			someone.originalBet = someone.bet; // Fallback if originalBet wasn't set properly
+	public static boolean doubleDown(players player) {
+		if (player.originalBet == 0) {
+			player.originalBet = player.bet; // Fallback if originalBet wasn't set properly
 		}
-		someone.bet = someone.originalBet * 2;
-		someone.hasDoubledDown = true;
-		System.out.println(someone.nick + "'s bet now is " + someone.bet);
-		hit(someone, someone.deck);
-		someone.hasStood = true; // Set directly instead of calling stand
+		player.bet = player.originalBet * 2;
+		player.hasDoubledDown = true;
+		System.out.println(player.nick + "'s bet now is " + player.bet);
+		hit(player, player.deck);
+		player.hasStood = true; // Set directly instead of calling stand
 		return true;
 	}
 
-	public static void split(players someone) {
-		if (splitAble(someone) == true) {
+	public static void split(players player) {
+		if (splitAble(player) == true) {
 
-			someone.hasSplit = true;
-			someone.score = someone.score - Integer.parseInt(someone.splitCard);
-			someone.splitScore = someone.splitScore + Integer.parseInt(someone.splitCard);
-			someone.deck.remove(someone.card);
-			someone.splitDeck.add(someone.splitCard);
+			player.hasSplit = true;
+			player.score = player.score - Integer.parseInt(player.splitCard);
+			player.splitScore = player.splitScore + Integer.parseInt(player.splitCard);
+			player.deck.remove(player.card);
+			player.splitDeck.add(player.splitCard);
 
-			hit(someone, someone.deck);
-			hit(someone, someone.splitDeck);
+			hit(player, player.deck);
+			hit(player, player.splitDeck);
 
 		} else {
 			System.out.println("Wrong choice buddy, choose again and wisely.");
@@ -102,37 +102,37 @@ public class resources {
 
 	// Extra
 
-	public static void choice(players someone, ArrayList<String> deck, boolean hasStood, int score, Scanner scanner) {
-		System.out.println("\nWhat now " + someone.nick + " ?\n"
+	public static void choice(players player, ArrayList<String> deck, boolean hasStood, int score, Scanner scanner) {
+		System.out.println("\nWhat now " + player.nick + " ?\n"
 				+ "You can hit, stand, double down or split with your hand/split-hand");
 
-		if (deck == someone.splitDeck) {
-			someone.splitChoice = true;
-		} else if (deck == someone.deck) {
-			someone.choice = true;
+		if (deck == player.splitDeck) {
+			player.splitChoice = true;
+		} else if (deck == player.deck) {
+			player.choice = true;
 		}
 
 		String action = scanner.next();
 		scanner.nextLine();
 		switch (action.toLowerCase()) {
 		case "hit":
-			hit(someone, deck);
+			hit(player, deck);
 			break;
 		case "stand":
-			if (someone.choice) {
-				stand(someone, score);
-			} else if (someone.splitChoice) {
-				stand(someone, score);
+			if (player.choice) {
+				stand(player, score);
+			} else if (player.splitChoice) {
+				stand(player, score);
 			}
 			break;
 		case "double":
-			if (!someone.hasStood) {
-				doubleDown(someone);
+			if (!player.hasStood) {
+				doubleDown(player);
 			}
 			break;
 		case "split":
-			if (!someone.hasStood) {
-				split(someone);
+			if (!player.hasStood) {
+				split(player);
 			}
 			break;
 		default:
@@ -140,41 +140,40 @@ public class resources {
 		}
 	}
 
-	public static boolean splitAble(players someone) {
+	public static boolean splitAble(players player) {
 		int count = 0;
 
-		for (int i = 0; i < someone.deck.size(); i++) {
-			if (someone.deck.get(i).equals(someone.card)) {
+		for (int i = 0; i < player.deck.size(); i++) {
+			if (player.deck.get(i).equals(player.card)) {
 				count++;
 			}
 		}
 		if (count >= 2) {
-			someone.splitCard = someone.card;
+			player.splitCard = player.card;
 			return true;
 		} else {
 			return false;
 		}
 	}
 
-	public static void addCard(players someone, ArrayList<String> deck) {
-		deck.add(someone.card);
+	public static void addCard(players player, ArrayList<String> deck) {
+		deck.add(player.card);
 
-		if (resources.sCards.containsKey(someone.card) == true) {
-			someone.score = someone.score + resources.sCards.get(someone.card);
+		if (resources.sCards.containsKey(player.card) == true) {
+			player.score = player.score + resources.sCards.get(player.card);
 		} else {
-			someone.score = someone.score + Integer.parseInt(someone.card);
+			player.score = player.score + Integer.parseInt(player.card);
 		}
 
-		if (someone.hasSplit) {
-			deck.add(someone.splitCard);
+		if (player.hasSplit) {
+			deck.add(player.splitCard);
 
-			if (resources.sCards.containsKey(someone.card) == true) {
-				someone.splitScore = someone.splitScore + resources.sCards.get(someone.splitCard);
+			if (resources.sCards.containsKey(player.card) == true) {
+				player.splitScore = player.splitScore + resources.sCards.get(player.splitCard);
 			} else {
-				someone.splitScore = someone.splitScore + Integer.parseInt(someone.splitCard);
+				player.splitScore = player.splitScore + Integer.parseInt(player.splitCard);
 			}
 		}
-		players.printInfo(someone);
 	}
 
 	public static ArrayList<players> theWinner(players[] allPlayers) {
