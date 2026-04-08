@@ -5,30 +5,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Players {
-	public ArrayList<String> deck = new ArrayList<String>();
-	public ArrayList<String> splitDeck = new ArrayList<String>();
-	public static Players[] allPlayers = new Players[0]; // +1 for the dealer
-
-	//
-	
-	public int bet;
-	public int score;
-	public int splitScore;
-	public int originalBet = 0;
-
-	public String nick;
-	public String card;
-	public String splitCard;
-
-	public boolean splitChoice = false;
-	public boolean choice = false;
-	public boolean hasStood = false;
-	public boolean splitHasStood = false;
-	public boolean hasSplit = false;
-	public boolean hasWon = false;
-	public boolean hasDoubledDown = false;
-	
-	//
+	public static Player[] allPlayers = new Player[0]; // +1 for the dealer
 	
 	public static int numPlayers = 1; 
 	public static int currentPlayer = 0;
@@ -54,7 +31,7 @@ public class Players {
 		try {
 			new File("player_bets.txt").createNewFile();
 			FileWriter writer = new FileWriter("player_bets.txt");
-			for (Players p : allPlayers) {
+			for (Player p : allPlayers) {
 				if (!p.nick.equals("Dealer")) {
 					writer.write(p.nick + ":" + p.bet + "\n");
 				}

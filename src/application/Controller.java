@@ -23,16 +23,17 @@ import javafx.util.Duration;
 // Current notes:
 
 //	Seperate the section between the empty comment rows in Players.java as a new class with the name of 
-//	Player.java and make the necessary adjustments in the rest of the code.
+//	Player.java and make the necessary adjustments in the rest of the code. => Do this in the java version
+//	of the game too.
 
 // 	EventListeners to the double down and stand buttons,
 // 	including the implamentation of the code from the previous version.
 
-// 	
+// 	The implementation of bust and blackjack (21), as well as other outcomes like 
 
 public class Controller {
 
-	// UI subjects
+	// UI objects
 
 	@FXML
 	ScrollPane consoleScrollPane;
@@ -313,7 +314,7 @@ public class Controller {
 
 		Players.allPlayers = new Players[0];
 		Players.currentPlayer = 0;
-		Players.numPlayers = 1; // Because the min amount is 1
+		Players.numPlayers = 1; // Because the min amount of players is 1
 		currentPlayerIndex = -1; // The player amount is not given in the start / game hasn't started yet
 
 		try (FileWriter writer = new FileWriter("player_bets.txt", false)) {
