@@ -4,20 +4,20 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Players {
-	public static Player[] allPlayers = new Player[0]; // +1 for the dealer
-	
-	public static int numPlayers = 1; 
-	public static int currentPlayer = 0;
+public class Game {
+	private Player[] allPlayers;
 
-	public int getCurrentPlayer() {
-		return currentPlayer;
+	private int currentPlayerIndex;
+	private int numPlayers;
+
+	public Player getCurrentPlayer() {
+		return allPlayers[currentPlayerIndex];
 	}
-	
-	public void setCurrentPlayer(int currentPlayer) {
-		this.currentPlayer = currentPlayer;
+
+	public void setCurrentPlayer(Player player) {
+		allPlayers[currentPlayerIndex] = player;
 	}
-	
+
 	public int getNumPlayers() {
 		return numPlayers;
 	}
@@ -26,8 +26,8 @@ public class Players {
 		this.numPlayers = numPlayers;
 	}
 
-	public static void saveBets(Players[] allPlayers) {
-		
+	public static void saveBets(Player[] allPlayers) {
+
 		try {
 			new File("player_bets.txt").createNewFile();
 			FileWriter writer = new FileWriter("player_bets.txt");
@@ -42,7 +42,7 @@ public class Players {
 		}
 	}
 
-	public static void loadBets(Players[] allPlayers, Controller ctrl) {
+	public static void loadBets(Game[] allPlayers, Controller ctrl) {
 
 		try {
 			Scanner fileScanner = new Scanner(new File("player_bets.txt"));
@@ -55,7 +55,7 @@ public class Players {
 
 				int bet = Integer.parseInt(parts[1]);
 
-				for (Players p : allPlayers) {
+				for (Player p : allPlayers) {
 					if (p.nick.equals(playerName)) {
 						p.bet = bet;
 						break;
@@ -79,19 +79,19 @@ public class Players {
 		System.out.print("\nHow many players? ");
 		int numPlayers = scanner.nextInt();
 
-		Players[] allPlayers = new Players[numPlayers + 1]; // +1 for the dealer
+		Game[] allPlayers = new Game[numPlayers + 1]; // +1 for the dealer
 
 		for (int i = 0; i < numPlayers; i++) {
-			allPlayers[i] = new Players();
+			allPlayers[i] = new Game();
 			allPlayers[i].nick = "Player " + (i + 1);
 		}
 
-		allPlayers[numPlayers] = new Players();
+		allPlayers[numPlayers] = new Game();
 		allPlayers[numPlayers].nick = "Dealer";
 
 		resources.setup();
 
-		for (Players p : allPlayers) {
+		for (Game p : allPlayers) {
 
 			if (!p.nick.equals("Dealer")) {
 
@@ -162,7 +162,7 @@ public class Players {
 
 			if (!gameActive) { // The results
 
-				ArrayList<Players> winners = resources.theWinner(allPlayers);
+				ArrayList<Game> winners = resources.theWinner(allPlayers);
 
 				if (winners.isEmpty()) {
 
@@ -176,7 +176,7 @@ public class Players {
 				} else {
 
 					System.out.println("\nIt is tied between:");
-					for (Players player : winners) {
+					for (Game player : winners) {
 
 						player.hasWon = true;
 						System.out.println("- " + player.nick);
@@ -185,7 +185,7 @@ public class Players {
 			}
 		} // game
 
-		for (Players p : allPlayers) { // Consequences
+		for (Game p : allPlayers) { // Consequences
 			if (!p.nick.equals("Dealer")) {
 				if (p.hasWon) {
 					if (p.hasDoubledDown) {
@@ -206,7 +206,7 @@ public class Players {
 			}
 		}
 
-		for (Players p : allPlayers) { // The change in bet
+		for (Game p : allPlayers) { // The change in bet
 			if (!p.nick.equals("Dealer")) {
 				System.out.println("\n" + p.nick + "'s bet now is: " + p.bet);
 			}
@@ -220,7 +220,7 @@ public class Players {
 			saveBets(allPlayers);
 		} else {
 
-			for (Players p : allPlayers) {
+			for (Game p : allPlayers) {
 
 				p.bet = 0;
 			}

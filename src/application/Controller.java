@@ -66,7 +66,7 @@ public class Controller {
 
 	public void sliderNumPlayers(MouseEvent e) {
 		Slider sliderNumPlayers = (Slider) e.getSource();
-		Players.numPlayers = (int) sliderNumPlayers.getValue();
+		Game.numPlayers = (int) sliderNumPlayers.getValue();
 	}
 
 	public void startBtn(ActionEvent e) throws IOException {
@@ -76,7 +76,7 @@ public class Controller {
 	public void notUnderstand(ActionEvent e) throws IOException {
 		sceneController.sceneHistory.clear();
 		sceneController.switchScene(e, "startScene.fxml");
-		Players.allPlayers = new Players[0];
+		Game.allPlayers = new Game[0];
 	}
 
 	private int currentPlayerIndex = -1;
@@ -95,33 +95,33 @@ public class Controller {
 		ctrl.currentPlayerIndex = 0;
 		stage.show();
 
-		Players.allPlayers = new Players[Players.numPlayers + 1]; // +1 for the dealer
+		Game.allPlayers = new Game[Game.numPlayers + 1]; // +1 for the dealer
 
-		for (int i = 0; i <= Players.numPlayers; i++) {
+		for (int i = 0; i <= Game.numPlayers; i++) {
 
-			if (i == Players.numPlayers) {
-				Players.allPlayers[i] = new Players();
-				Players.allPlayers[i].nick = "Dealer";
+			if (i == Game.numPlayers) {
+				Game.allPlayers[i] = new Game();
+				Game.allPlayers[i].nick = "Dealer";
 
 			} else {
-				Players.allPlayers[i] = new Players();
-				Players.allPlayers[i].nick = "Player " + (i + 1);
+				Game.allPlayers[i] = new Game();
+				Game.allPlayers[i].nick = "Player " + (i + 1);
 			}
 		}
 
 		resources.setup();
 
-		Players.loadBets(Players.allPlayers, ctrl);
+		Game.loadBets(Game.allPlayers, ctrl);
 
 		ctrl.currentPlayerIndex = 0;
 
-		while (ctrl.currentPlayerIndex < Players.numPlayers && Players.allPlayers[ctrl.currentPlayerIndex].bet != 0) {
+		while (ctrl.currentPlayerIndex < Game.numPlayers && Game.allPlayers[ctrl.currentPlayerIndex].bet != 0) {
 			ctrl.currentPlayerIndex++;
 		}
 
-		if (ctrl.currentPlayerIndex < Players.numPlayers) {
+		if (ctrl.currentPlayerIndex < Game.numPlayers) {
 
-			ctrl.betLabel.setText("How much is your bet " + Players.allPlayers[ctrl.currentPlayerIndex].nick + "?");
+			ctrl.betLabel.setText("How much is your bet " + Game.allPlayers[ctrl.currentPlayerIndex].nick + "?");
 			ctrl.betInput.setVisible(true);
 		} else {
 
@@ -131,7 +131,7 @@ public class Controller {
 	}
 
 	public void setBet(ActionEvent e) {
-		if (currentPlayerIndex == -1 || currentPlayerIndex >= Players.numPlayers) {
+		if (currentPlayerIndex == -1 || currentPlayerIndex >= Game.numPlayers) {
 			nextButton.setVisible(true);
 			setButton.setVisible(false);
 			return; // No more players need to set bets
@@ -141,19 +141,19 @@ public class Controller {
 			int betValue = Integer.parseInt(betInput.getText());
 
 			if (betValue >= 1) {
-				Players p = Players.allPlayers[currentPlayerIndex];
+				Game p = Game.allPlayers[currentPlayerIndex];
 				p.originalBet = betValue;
 				p.bet = p.originalBet;
 
 				currentPlayerIndex++;
 
-				while (currentPlayerIndex < Players.numPlayers && Players.allPlayers[currentPlayerIndex].bet != 0) {
+				while (currentPlayerIndex < Game.numPlayers && Game.allPlayers[currentPlayerIndex].bet != 0) {
 					currentPlayerIndex++;
 				}
 
-				if (currentPlayerIndex < Players.numPlayers) {
+				if (currentPlayerIndex < Game.numPlayers) {
 
-					betLabel.setText("How much is your bet " + Players.allPlayers[currentPlayerIndex].nick + "?");
+					betLabel.setText("How much is your bet " + Game.allPlayers[currentPlayerIndex].nick + "?");
 					betInput.clear();
 				} else {
 
@@ -167,13 +167,13 @@ public class Controller {
 			}
 		} catch (NumberFormatException ex) {
 
-			betLabel.setText("Invalid bet for " + Players.allPlayers[currentPlayerIndex].nick
+			betLabel.setText("Invalid bet for " + Game.allPlayers[currentPlayerIndex].nick
 					+ ": Enter a valid positive number.");
 		}
 	}
 
 	public void toScene3(ActionEvent e) throws IOException {
-		Players.currentPlayer = 0;
+		Game.currentPlayer = 0;
 		sceneController.switchScene(e, "scene3.fxml");
 	}
 
@@ -181,7 +181,7 @@ public class Controller {
 
 	public void hitAction(ActionEvent e) {
 
-		Players player = Players.allPlayers[Players.currentPlayer];
+		Game player = Game.allPlayers[Game.currentPlayer];
 
 		if (!player.nick.equals("Dealer")) {
 			resources.hit(player, player.deck);
@@ -204,10 +204,10 @@ public class Controller {
 			}
 			appendToConsole(output);
 
-			Players lastHumanPlayer = Players.allPlayers[Players.numPlayers - 1]; // Incase of last player
+			Game lastHumanPlayer = Game.allPlayers[Game.numPlayers - 1]; // Incase of last player
 
 			if (player.nick.equals(lastHumanPlayer.nick)) {
-				Players dealer = Players.allPlayers[Players.numPlayers];
+				Game dealer = Game.allPlayers[Game.numPlayers];
 				resources.hit(dealer, dealer.deck);
 
 				String dealerOutput = dealer.nick + " hit!\n" + dealer.nick + "'s card this round: " + dealer.card + "\n" + "The amount of cards in " + dealer.nick + "'s deck: " + dealer.deck.size() + "\n" + "The total value of " + dealer.nick + "'s hand: " + dealer.score + "\n";
@@ -215,18 +215,18 @@ public class Controller {
 				PauseTransition pause = new PauseTransition(Duration.seconds(0.2));
 				pause.setOnFinished(event -> {
 					appendToConsole(dealerOutput);
-					Players.currentPlayer = 0;
+					Game.currentPlayer = 0;
 				});
 				pause.play();
 				
 			} else {
-				Players.currentPlayer++;
+				Game.currentPlayer++;
 			}
 		}
 	}
 
 	public void splitAction(ActionEvent e) {
-		Players player = Players.allPlayers[Players.currentPlayer];
+		Game player = Game.allPlayers[Game.currentPlayer];
 
 		resources.split(player);
 
@@ -239,14 +239,14 @@ public class Controller {
 		appendToConsole(output);
 
 		if (player.nick == "Dealer") {
-			Players.currentPlayer = 0;
+			Game.currentPlayer = 0;
 		} else {
-			Players.currentPlayer++;
+			Game.currentPlayer++;
 		}
 	}
 
 	public void doubleAction(ActionEvent e) {
-		Players player = Players.allPlayers[Players.currentPlayer];
+		Game player = Game.allPlayers[Game.currentPlayer];
 		resources.doubleDown(player);
 
 		String output = player.nick + " doubled down!";
@@ -256,7 +256,7 @@ public class Controller {
 	}
 
 	public void standAction(ActionEvent e) {
-		Players player = Players.allPlayers[Players.currentPlayer];
+		Game player = Game.allPlayers[Game.currentPlayer];
 		resources.stand(player, player.score);
 	}
 
@@ -288,10 +288,10 @@ public class Controller {
 	}
 
 	private void resetGame() {
-		for (int i = 0; i < Players.numPlayers; i++) {
-			Players p = Players.allPlayers[i];
+		for (int i = 0; i < Game.numPlayers; i++) {
+			Game p = Game.allPlayers[i];
 
-			if (Players.allPlayers[i] != null) {
+			if (Game.allPlayers[i] != null) {
 				p.deck.clear();
 				p.splitDeck.clear();
 
@@ -312,9 +312,9 @@ public class Controller {
 			}
 		}
 
-		Players.allPlayers = new Players[0];
-		Players.currentPlayer = 0;
-		Players.numPlayers = 1; // Because the min amount of players is 1
+		Game.allPlayers = new Game[0];
+		Game.currentPlayer = 0;
+		Game.numPlayers = 1; // Because the min amount of players is 1
 		currentPlayerIndex = -1; // The player amount is not given in the start / game hasn't started yet
 
 		try (FileWriter writer = new FileWriter("player_bets.txt", false)) {

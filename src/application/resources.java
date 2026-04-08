@@ -39,7 +39,7 @@ public class resources {
 
 	// Actions
 
-	public static void hit(Players player, ArrayList<String> deck) {
+	public static void hit(Game player, ArrayList<String> deck) {
 
 		if (!player.hasStood) {
 
@@ -53,7 +53,7 @@ public class resources {
 		addCard(player, deck);
 	}
 
-	public static void stand(Players player, int score) {
+	public static void stand(Game player, int score) {
 
 		if (player.nick.equals("Dealer")) {
 			player.hasStood = true;
@@ -71,7 +71,7 @@ public class resources {
 		}
 	}
 
-	public static boolean doubleDown(Players player) {
+	public static boolean doubleDown(Game player) {
 		if (player.originalBet == 0) {
 			player.originalBet = player.bet; // Fallback if originalBet wasn't set properly
 		}
@@ -83,7 +83,7 @@ public class resources {
 		return true;
 	}
 
-	public static void split(Players player) {
+	public static void split(Game player) {
 		if (splitAble(player) == true) {
 
 			player.hasSplit = true;
@@ -102,7 +102,7 @@ public class resources {
 
 	// Extra
 
-	public static void choice(Players player, ArrayList<String> deck, boolean hasStood, int score, Scanner scanner) {
+	public static void choice(Game player, ArrayList<String> deck, boolean hasStood, int score, Scanner scanner) {
 		System.out.println("\nWhat now " + player.nick + " ?\n"
 				+ "You can hit, stand, double down or split with your hand/split-hand");
 
@@ -140,7 +140,7 @@ public class resources {
 		}
 	}
 
-	public static boolean splitAble(Players player) {
+	public static boolean splitAble(Game player) {
 		int count = 0;
 
 		for (int i = 0; i < player.deck.size(); i++) {
@@ -156,7 +156,7 @@ public class resources {
 		}
 	}
 
-	public static void addCard(Players player, ArrayList<String> deck) {
+	public static void addCard(Game player, ArrayList<String> deck) {
 		deck.add(player.card);
 
 		if (resources.sCards.containsKey(player.card) == true) {
@@ -176,19 +176,19 @@ public class resources {
 		}
 	}
 
-	public static ArrayList<Players> theWinner(Players[] allPlayers) {
-		ArrayList<Players> winners = new ArrayList<>();
+	public static ArrayList<Game> theWinner(Game[] allPlayers) {
+		ArrayList<Game> winners = new ArrayList<>();
 
 		int bestScore = 0;
 
 		// Find best score that's not bust
-		for (Players p : allPlayers) {
+		for (Game p : allPlayers) {
 			if (p.score <= 21 && p.score > bestScore) {
 				bestScore = p.score;
 			}
 		}
 
-		for (Players p : allPlayers) {
+		for (Game p : allPlayers) {
 			if (p.score == bestScore && p.score <= 21) {
 				winners.add(p);
 			}
