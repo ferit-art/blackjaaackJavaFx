@@ -7,7 +7,7 @@ import java.util.Scanner;
 public class Game {
 	private Player[] allPlayers;
 	private int currentPlayerIndex = -1; // The actual game has not started yet
-	private int numPlayers;
+	private int numPlayers = 1; // Min amount of players is 1
 
 	public int getNumPlayers() {
 		return numPlayers;
