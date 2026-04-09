@@ -23,15 +23,17 @@ import javafx.util.Duration;
 
 //	Seperate the section between the empty comment rows in Players.java as a new class with the name of 
 //	Player.java and make the necessary adjustments in the rest of the code. => Do this in the java version
-//	of the game too.
+//	of the game too, although it is not the prioriety.
+
+//	Seperation is done for the fx project.
 
 // 	EventListeners to the double down and stand buttons,
 // 	including the implamentation of the code from the previous version.
 
-// 	The implementation of bust and blackjack (21), as well as other outcomes like 
+// 	The implementation of bust and blackjack (21), as well as other outcomes like tie and double-downed win.
 
 public class Controller {
-	public Game game = new Game();
+	public static Game game = new Game();
 
 	// UI objects
 
