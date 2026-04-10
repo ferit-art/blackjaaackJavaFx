@@ -15,7 +15,7 @@ public class Player {
 	public String card;
 	public String splitCard;
 
-	public boolean splitChoice = false;
+	public boolean splitAction = false; // Determines if the next player action is for the split deck or the primary.
 	public boolean choice = false;
 	public boolean hasStood = false;
 	public boolean splitHasStood = false;

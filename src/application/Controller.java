@@ -29,8 +29,11 @@ import javafx.util.Duration;
 
 // 	EventListeners to the double down and stand buttons,
 // 	including the implamentation of the code from the previous version.
+//	Thus, the splitAction instance variable is nessesary to determine which hand (called deck) the turn's action should affect.
 
 // 	The implementation of bust and blackjack (21), as well as other outcomes like tie and double-downed win.
+
+//	If time is sufficient, animations would be nice...
 
 public class Controller {
 	public static Game game = new Game();
@@ -254,7 +257,7 @@ public class Controller {
 		}
 	}
 
-	public void doubleAction(ActionEvent e) {
+	public void doubleDownAction(ActionEvent e) {
 		Player player = game.getAllPlayers()[game.getCurrentPlayerIndex()];
 		resources.doubleDown(player);
 
@@ -267,6 +270,15 @@ public class Controller {
 	public void standAction(ActionEvent e) {
 		Player player = game.getAllPlayers()[game.getCurrentPlayerIndex()];
 		resources.stand(player, player.score);
+		
+		if (player.nick.equals("Dealer")) {
+			appendToConsole("\n" + player.nick + " stands with " + player.score + " as the total value");
+			
+		} else {
+			if (player.splitChoice) {
+				
+			}
+		}
 	}
 
 	public void goBack(ActionEvent e) throws IOException {

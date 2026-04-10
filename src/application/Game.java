@@ -25,6 +25,14 @@ public class Game {
 		this.allPlayers = allPlayers;
 	}
 
+	public int getCurrentPlayerIndex() {
+		return currentPlayerIndex;
+	}
+
+	public void setCurrentPlayerIndex(int currentPlayerIndex) {
+		this.currentPlayerIndex = currentPlayerIndex;
+	}
+
 	public static void saveBets(Player[] allPlayers) {
 
 		try {
@@ -66,14 +74,6 @@ public class Game {
 
 		} catch (FileNotFoundException e) {
 		}
-	}
-
-	public int getCurrentPlayerIndex() {
-		return currentPlayerIndex;
-	}
-
-	public void setCurrentPlayerIndex(int currentPlayerIndex) {
-		this.currentPlayerIndex = currentPlayerIndex;
 	}
 }
 /*

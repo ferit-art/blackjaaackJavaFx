@@ -36,7 +36,7 @@
             <Font name="DejaVu Serif Bold" size="20.0" />
          </font>
       </Button>
-      <Button fx:id="doubleButton" layoutX="558.0" layoutY="518.0" mnemonicParsing="false" onAction="#doubleAction" text="DOUBLE DOWN">
+      <Button fx:id="doubleButton" layoutX="558.0" layoutY="518.0" mnemonicParsing="false" onAction="#doubleDownAction" text="DOUBLE DOWN">
          <font>
             <Font name="System Bold" size="11.0" />
          </font>

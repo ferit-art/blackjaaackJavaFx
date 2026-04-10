@@ -46,6 +46,7 @@ public class resources {
 			Random random0 = new Random();
 			player.card = allCards.get(random0.nextInt(allCards.size()));
 		}
+
 		if (player.hasSplit && !player.splitHasStood) {
 			Random random1 = new Random();
 			player.splitCard = allCards.get(random1.nextInt(allCards.size()));
@@ -57,7 +58,6 @@ public class resources {
 
 		if (player.nick.equals("Dealer")) {
 			player.hasStood = true;
-			System.out.println("\n" + player.nick + " stands with " + score + " as the total value");
 
 		} else {
 			if (player.splitChoice) {
@@ -84,6 +84,7 @@ public class resources {
 	}
 
 	public static void split(Player player) {
+		
 		if (splitAble(player) == true) {
 
 			player.hasSplit = true;
@@ -96,12 +97,15 @@ public class resources {
 			hit(player, player.splitDeck);
 
 		} else {
-			System.out.println("Wrong choice buddy, choose again and wisely.");
+			
+			// System.out.println("Wrong choice buddy, choose again and wisely.");
 		}
 	}
 
 	// Extra
 
+	//	choice method is now implemented directly inside of the controller file.
+	
 	public static void choice(Player player, ArrayList<String> deck, boolean hasStood, int score, Scanner scanner) {
 		System.out.println("\nWhat now " + player.nick + " ?\n"
 				+ "You can hit, stand, double down or split with your hand/split-hand");
@@ -131,7 +135,7 @@ public class resources {
 			}
 			break;
 		case "split":
-			if (!player.hasStood) {
+			if (!player.hasStood && !player.hasSplit) {
 				split(player);
 			}
 			break;
@@ -143,11 +147,12 @@ public class resources {
 	public static boolean splitAble(Player player) {
 		int count = 0;
 
-		for (int i = 0; i < player.deck.size(); i++) {
+		for (int i = 0; i < player.deck.size(); i++) { // Searches through the original deck
 			if (player.deck.get(i).equals(player.card)) {
 				count++;
 			}
 		}
+		
 		if (count >= 2) {
 			player.splitCard = player.card;
 			return true;
