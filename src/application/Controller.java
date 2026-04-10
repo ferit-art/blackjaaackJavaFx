@@ -19,7 +19,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-// Current notes:
+// 	Current notes:
 
 //	Seperate the section between the empty comment rows in Players.java as a new class with the name of 
 //	Player.java and make the necessary adjustments in the rest of the code. => Do this in the java version
@@ -32,6 +32,8 @@ import javafx.util.Duration;
 //	Thus, the splitAction instance variable is nessesary to determine which hand (called deck) the turn's action should affect.
 
 // 	The implementation of bust and blackjack (21), as well as other outcomes like tie and double-downed win.
+
+// 	It is alright to have much code but write new methods so that the event handler methods can be read in english.
 
 //	If time is sufficient, animations would be nice...
 
@@ -193,7 +195,7 @@ public class Controller {
 
 		Player player = game.getAllPlayers()[game.getCurrentPlayerIndex()];
 
-		if (!player.nick.equals("Dealer")) {
+		if (!player.nick.equals("Dealer") && !player.splitTurn) {
 			resources.hit(player, player.deck);
 
 			String output = player.nick + " hit!\n";
@@ -204,14 +206,6 @@ public class Controller {
 
 			output += "The total value of " + player.nick + "'s hand: " + player.score + "\n";
 
-			if (player.hasSplit) {
-				output += player.nick + "'s split-card this round: " + player.splitCard + "\n";
-
-				output += "The amount of " + player.nick + "'s cards in the splitted deck is " + player.splitDeck.size()
-						+ "\n";
-
-				output += "The total value of " + player.nick + "'s split hand: " + player.splitScore + "\n";
-			}
 			appendToConsole(output);
 
 			Player lastHumanPlayer = game.getAllPlayers()[game.getNumPlayers() - 1]; // Incase of last player
@@ -230,6 +224,7 @@ public class Controller {
 					game.setCurrentPlayerIndex(0);
 				});
 				pause.play();
+			} else if (player.splitTurn) {
 
 			} else {
 				game.setCurrentPlayerIndex(game.getCurrentPlayerIndex() + 1);
@@ -240,20 +235,20 @@ public class Controller {
 	public void splitAction(ActionEvent e) {
 		Player player = game.getAllPlayers()[game.getCurrentPlayerIndex()];
 
-		resources.split(player);
+		if (!resources.splitAble(player)) {
+			String output = "Every player can split hands only 1 time...\n"
+					+ player.nick + " has to have 2 cards of the same value in his hand to be able to split..." + "\n";
+			appendToConsole(output);
+		} else if (resources.splitAble(player)) {
+			resources.split(player);
 
-		String output = player.nick + " split!";
+			String output = player.nick + " split!";
 
-		output += "\nThe amount of " + player.nick + "'s cards in the splitted deck is " + player.splitDeck.size();
+			output += "\nThe amount of " + player.nick + "'s cards in the splitted deck is " + player.splitDeck.size();
 
-		output += "\nThe total value of " + player.nick + "'s split hand: " + player.splitScore + "\n";
+			output += "\nThe total value of " + player.nick + "'s split hand: " + player.splitScore + "\n";
 
-		appendToConsole(output);
-
-		if (player.nick == "Dealer") {
-			game.setCurrentPlayerIndex(0);
-		} else {
-			game.setCurrentPlayerIndex(game.getCurrentPlayerIndex() + 1);
+			appendToConsole(output);
 		}
 	}
 
@@ -270,13 +265,13 @@ public class Controller {
 	public void standAction(ActionEvent e) {
 		Player player = game.getAllPlayers()[game.getCurrentPlayerIndex()];
 		resources.stand(player, player.score);
-		
+
 		if (player.nick.equals("Dealer")) {
 			appendToConsole("\n" + player.nick + " stands with " + player.score + " as the total value");
-			
+
 		} else {
-			if (player.splitChoice) {
-				
+			if (player.splitTurn) {
+
 			}
 		}
 	}
@@ -328,7 +323,7 @@ public class Controller {
 				p.hasSplit = false;
 				p.hasDoubledDown = false;
 				p.hasWon = false;
-				p.splitChoice = false;
+				p.splitTurn = false;
 				p.choice = false;
 			}
 		}

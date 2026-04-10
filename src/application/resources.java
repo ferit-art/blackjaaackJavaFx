@@ -60,7 +60,7 @@ public class resources {
 			player.hasStood = true;
 
 		} else {
-			if (player.splitChoice) {
+			if (player.splitTurn) {
 				player.splitHasStood = true;
 				System.out.println(
 						"\n" + player.nick + " stands with " + score + " as the total value for the split hand");
@@ -97,7 +97,6 @@ public class resources {
 			hit(player, player.splitDeck);
 
 		} else {
-			
 			// System.out.println("Wrong choice buddy, choose again and wisely.");
 		}
 	}
@@ -111,7 +110,7 @@ public class resources {
 				+ "You can hit, stand, double down or split with your hand/split-hand");
 
 		if (deck == player.splitDeck) {
-			player.splitChoice = true;
+			player.splitTurn = true;
 		} else if (deck == player.deck) {
 			player.choice = true;
 		}
@@ -125,7 +124,7 @@ public class resources {
 		case "stand":
 			if (player.choice) {
 				stand(player, score);
-			} else if (player.splitChoice) {
+			} else if (player.splitTurn) {
 				stand(player, score);
 			}
 			break;
@@ -153,7 +152,7 @@ public class resources {
 			}
 		}
 		
-		if (count >= 2) {
+		if (count >= 2 && !player.hasSplit) {
 			player.splitCard = player.card;
 			return true;
 		} else {
