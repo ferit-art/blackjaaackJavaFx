@@ -41,17 +41,15 @@ public class resources {
 
 	public static void hit(Player player, ArrayList<String> deck) {
 
-		if (!player.hasStood) {
+		Random random = new Random();
+		String drawnCard = allCards.get(random.nextInt(allCards.size()));
 
-			Random random0 = new Random();
-			player.card = allCards.get(random0.nextInt(allCards.size()));
+		if (deck == player.splitDeck) {
+			player.splitCard = drawnCard;
+		} else {
+			player.card = drawnCard;
 		}
-
-		if (player.hasSplit && !player.splitHasStood) {
-			Random random1 = new Random();
-			player.splitCard = allCards.get(random1.nextInt(allCards.size()));
-		}
-		addCard(player, deck);
+		addCard(player, deck, drawnCard);
 	}
 
 	public static void stand(Player player, int score) {
@@ -84,27 +82,29 @@ public class resources {
 	}
 
 	public static void split(Player player) {
-		
-		if (splitAble(player) == true) {
+		player.hasSplit = true;
+		int splitCardValue;
 
-			player.hasSplit = true;
-			player.score = player.score - Integer.parseInt(player.splitCard);
-			player.splitScore = player.splitScore + Integer.parseInt(player.splitCard);
-			player.deck.remove(player.card);
-			player.splitDeck.add(player.splitCard);
-
-			hit(player, player.deck);
-			hit(player, player.splitDeck);
-
+		if (sCards.containsKey(player.splitCard) == true) {
+			splitCardValue = sCards.get(player.splitCard);
 		} else {
-			// System.out.println("Wrong choice buddy, choose again and wisely.");
+			splitCardValue = Integer.parseInt(player.splitCard);
 		}
+
+		player.score = player.score - splitCardValue;
+		player.splitScore = player.splitScore + splitCardValue;
+		player.deck.remove(player.card);
+		player.splitDeck.add(player.splitCard);
+
+		hit(player, player.deck);
+		hit(player, player.splitDeck);
 	}
 
 	// Extra
 
-	//	choice method is now implemented directly inside of the controller file.
-	
+	// choice method is now implemented directly inside of the controller file
+	// depending on the action taken.
+
 	public static void choice(Player player, ArrayList<String> deck, boolean hasStood, int score, Scanner scanner) {
 		System.out.println("\nWhat now " + player.nick + " ?\n"
 				+ "You can hit, stand, double down or split with your hand/split-hand");
@@ -144,40 +144,61 @@ public class resources {
 	}
 
 	public static boolean splitAble(Player player) {
-		int count = 0;
 
-		for (int i = 0; i < player.deck.size(); i++) { // Searches through the original deck
-			if (player.deck.get(i).equals(player.card)) {
-				count++;
-			}
-		}
-		
-		if (count >= 2 && !player.hasSplit) {
-			player.splitCard = player.card;
-			return true;
-		} else {
+		if (player.hasSplit || player.hasStood) {
 			return false;
 		}
-	}
+		
+		String firstCard = null;
+		String secondCard = null;
 
-	public static void addCard(Player player, ArrayList<String> deck) {
-		deck.add(player.card);
+		for (int i = 0; i < player.deck.size(); i++) {
+			firstCard = player.deck.get(i);
 
-		if (resources.sCards.containsKey(player.card) == true) {
-			player.score = player.score + resources.sCards.get(player.card);
-		} else {
-			player.score = player.score + Integer.parseInt(player.card);
-		}
+			for (int j = i + 1; j < player.deck.size(); j++) {
+				secondCard = player.deck.get(j);
 
-		if (player.hasSplit) {
-			deck.add(player.splitCard);
-
-			if (resources.sCards.containsKey(player.card) == true) {
-				player.splitScore = player.splitScore + resources.sCards.get(player.splitCard);
-			} else {
-				player.splitScore = player.splitScore + Integer.parseInt(player.splitCard);
+				if (firstCard.equals(secondCard)) {
+					player.splitCard = firstCard;
+					player.card = player.splitCard;
+					return true;
+				}
 			}
 		}
+		return false;
+	}
+
+	public static void addCard(Player player, ArrayList<String> deck, String drawnCard) {
+
+		deck.add(drawnCard);
+
+		int cardValue;
+		if (resources.sCards.containsKey(drawnCard)) {
+			cardValue = resources.sCards.get(drawnCard);
+		} else {
+			cardValue = Integer.parseInt(drawnCard);
+		}
+
+		if (deck == player.splitDeck) {
+			player.splitScore = player.splitScore + cardValue;
+		} else {
+			player.score = player.score + cardValue;
+		}
+
+		/*
+		 * deck.add(player.card);
+		 * 
+		 * if (resources.sCards.containsKey(player.card) == true) { player.score =
+		 * player.score + resources.sCards.get(player.card); } else { player.score =
+		 * player.score + Integer.parseInt(player.card); }
+		 * 
+		 * if (player.hasSplit) { deck.add(player.splitCard);
+		 * 
+		 * if (resources.sCards.containsKey(player.card) == true) { player.splitScore =
+		 * player.splitScore + resources.sCards.get(player.splitCard); } else {
+		 * player.splitScore = player.splitScore + Integer.parseInt(player.splitCard); }
+		 * }
+		 */
 	}
 
 	public static ArrayList<Player> theWinner(Player[] allPlayers) {

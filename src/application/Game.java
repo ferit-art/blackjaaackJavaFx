@@ -8,7 +8,8 @@ public class Game {
 	private Player[] allPlayers;
 	private int currentPlayerIndex = -1; // The actual game has not started yet
 	private int numPlayers = 1; // Min amount of players is 1
-
+	private Player lastHumanPlayer;
+	
 	public int getNumPlayers() {
 		return numPlayers;
 	}
@@ -74,6 +75,14 @@ public class Game {
 
 		} catch (FileNotFoundException e) {
 		}
+	}
+
+	public Player getLastHumanPlayer() {
+		return lastHumanPlayer;
+	}
+
+	public void setLastHumanPlayer(Player lastHumanPlayer) {
+		this.lastHumanPlayer = lastHumanPlayer;
 	}
 }
 /*
