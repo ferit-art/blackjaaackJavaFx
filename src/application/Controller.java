@@ -21,15 +21,8 @@ import javafx.util.Duration;
 
 // 	Current notes:
 
-//	Seperate the section between the empty comment rows in Players.java as a new class with the name of 
-//	Player.java and make the necessary adjustments in the rest of the code. 
-//	=> Do this in the java version of the game too, although it is not the prioriety.
-
-//	Seperation is done for the fx project.
-
 // 	EventListeners to the double down and stand buttons,
 // 	including the implamentation of the code from the previous version.
-//	Thus, the splitTurn instance variable is nessesary to determine which hand (called deck) the turn's action should affect.
 
 // 	The implementation of bust and blackjack (21), as well as other outcomes like tie and double-downed win.
 
@@ -38,9 +31,6 @@ import javafx.util.Duration;
 //	Start a vscode (for home-pc) and a eclipse-branch for the blackjaaackJavaFx project when time is sufficient.
 
 //	If time is sufficient, animations would be nice...
-
-//	The splitAction should be looked at again, because when it is run it bricks the whole game loop and only allows hit the 
-//	return null!
 
 public class Controller {
 	public static Game game = new Game();
@@ -215,6 +205,8 @@ public class Controller {
 			output += "The total value of " + player.nick + "'s hand: " + player.score + "\n";
 
 			if (player.hasSplit) {
+				
+				output += "\n" + player.nick + "'s split turn:";
 				player.splitTurn = true;
 
 			} else if (player.nick.equals(game.getLastHumanPlayer().nick)) {
@@ -383,7 +375,7 @@ public class Controller {
 		game.setCurrentPlayerIndex(-1); // The player amount is not given in the start / game hasn't started yet
 
 		try (FileWriter writer = new FileWriter("player_bets.txt", false)) {
-			writer.write(""); // ← empty file
+			writer.write(""); // Empty file
 			writer.flush();
 		} catch (Exception ignored) {
 		}
