@@ -13,7 +13,7 @@
             <Font name="System Bold" size="17.59" />
          </font>
       </Label>
-      <Button layoutX="550.0" layoutY="542.0" mnemonicParsing="false" onAction="#understand" prefHeight="33.0" prefWidth="104.0" text="I understand">
+      <Button layoutX="550.0" layoutY="542.0" mnemonicParsing="false" onAction="#understand" prefHeight="33.0" prefWidth="104.0" text="Consent">
          <font>
             <Font name="System Bold Italic" size="14.0" />
          </font>
