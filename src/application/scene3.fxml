@@ -6,6 +6,7 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
@@ -67,41 +68,6 @@
       <Line endX="52.75" endY="81.75" layoutX="524.0" layoutY="472.0" startX="113.25" startY="81.75" />
       <Line endX="53.0" endY="107.0" layoutX="524.0" layoutY="472.0" startX="113.25" startY="107.0" />
       <Line endX="113.75" endY="106.5" layoutX="524.0" layoutY="472.0" startX="113.75" startY="82.0" />
-      <ImageView fitHeight="151.0" fitWidth="102.0" layoutX="554.0" layoutY="54.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../Special%20cards/Hearts/Queen%20of%20hearts.png" />
-         </image>
-      </ImageView>
-      <ImageView fitHeight="151.0" fitWidth="136.0" layoutX="443.0" layoutY="52.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../Special%20cards/Hearts/King%20of%20hearts.png" />
-         </image>
-      </ImageView>
-      <ImageView fitHeight="151.0" fitWidth="99.0" layoutX="666.0" layoutY="54.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../Special%20cards/Hearts/Jack%20of%20hearts.png" />
-         </image>
-      </ImageView>
-      <Label fx:id="player41" alignment="CENTER" layoutX="561.0" layoutY="13.0" prefHeight="29.0" prefWidth="83.0" text="Player 3">
-         <font>
-            <Font name="System Bold" size="20.0" />
-         </font>
-      </Label>
-      <ImageView fitHeight="151.0" fitWidth="102.0" layoutX="556.0" layoutY="221.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../Special%20cards/Hearts/Queen%20of%20hearts.png" />
-         </image>
-      </ImageView>
-      <ImageView fitHeight="151.0" fitWidth="136.0" layoutX="445.0" layoutY="219.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../Special%20cards/Hearts/King%20of%20hearts.png" />
-         </image>
-      </ImageView>
-      <ImageView fitHeight="151.0" fitWidth="99.0" layoutX="668.0" layoutY="221.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../Special%20cards/Hearts/Jack%20of%20hearts.png" />
-         </image>
-      </ImageView>
       <ImageView fitHeight="151.0" fitWidth="102.0" layoutX="557.0" layoutY="799.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../Special%20cards/Hearts/Queen%20of%20hearts.png" />
@@ -200,5 +166,6 @@
             <Font name="DejaVu Serif Bold" size="16.0" />
          </font>
       </Button>
+      <HBox fx:id="dealerContainer" layoutX="435.0" layoutY="11.0" prefHeight="314.0" prefWidth="334.0" />
    </children>
 </AnchorPane>

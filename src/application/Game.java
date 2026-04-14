@@ -2,9 +2,14 @@ package application;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
+import javafx.scene.layout.HBox;
+
 public class Game {
+	
+	private HashMap<String, HBox> playerDeckContainers = new HashMap<>(); // Image containers for the players
 	private Player[] allPlayers;
 	private int currentPlayerIndex = -1; // The actual game has not started yet
 	private int numPlayers = 1; // Min amount of players is 1
@@ -83,6 +88,14 @@ public class Game {
 
 	public void setLastHumanPlayer(Player lastHumanPlayer) {
 		this.lastHumanPlayer = lastHumanPlayer;
+	}
+
+	public HashMap<String, HBox> getPlayerDeckContainers() {
+		return playerDeckContainers;
+	}
+
+	public void setPlayerDeckContainers(HashMap<String, HBox> playerDeckContainers) {
+		this.playerDeckContainers = playerDeckContainers;
 	}
 }
 /*

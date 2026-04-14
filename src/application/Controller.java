@@ -2,6 +2,7 @@ package application;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 
 import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
@@ -16,6 +17,8 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -63,6 +66,8 @@ public class Controller {
 	Button doubleButton;
 	@FXML
 	Button splitButton;
+	@FXML
+	HBox dealerContainer;
 
 	// Event handlers
 
@@ -82,18 +87,9 @@ public class Controller {
 	}
 
 	public void understand(ActionEvent e) throws IOException {
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("scene2.fxml")); // Same thing as switchScene, but
-																					// delivers the controller too
-		sceneController.sceneHistory.push("scene2.fxml");
 
-		Parent root = loader.load();
-		Controller ctrl = loader.getController();
-
-		Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
-		Scene scene = new Scene(root);
-		stage.setScene(scene);
+		Controller ctrl = sceneController.switchSceneWithController(e, "scene2.fxml");
 		game.setCurrentPlayerIndex(0);
-		stage.show();
 
 		game.setAllPlayers(new Player[game.getNumPlayers() + 1]); // +1 for the dealer
 
@@ -183,7 +179,8 @@ public class Controller {
 
 	public void toScene3(ActionEvent e) throws IOException {
 		game.setCurrentPlayerIndex(0);
-		sceneController.switchScene(e, "scene3.fxml");
+		Controller scene3Controller = sceneController.switchSceneWithController(e, "scene3.fxml");
+		scene3Controller.setupView();
 	}
 
 	// Player actions (In-game)
@@ -205,7 +202,7 @@ public class Controller {
 			output += "The total value of " + player.nick + "'s hand: " + player.score + "\n";
 
 			if (player.hasSplit) {
-				
+
 				output += "\n" + player.nick + "'s split turn:";
 				player.splitTurn = true;
 
@@ -333,6 +330,42 @@ public class Controller {
 	}
 
 	// Helper methods
+
+	public void setupView() {
+		HashMap<String, HBox> playerDeckContainers = game.getPlayerDeckContainers();
+
+		/*
+		 * for (int i = 0; i < game.getNumPlayers(); i++) { Player p =
+		 * game.getAllPlayers()[i];
+		 * 
+		 * VBox playerUiBox = new VBox(10);
+		 * playerUiBox.setStyle("-fx-alignment: center;");
+		 * 
+		 * Label nameLabel = new Label(p.nick); Label betLabel = new Label("Bet: " +
+		 * p.bet); Label scoreLabel = new Label("Score: " + p.score);
+		 * 
+		 * // The box that will actually hold their card images HBox cardsBox = new
+		 * HBox(-20); // Negative spacing makes the cards overlap slightly!
+		 * 
+		 * // Save this cardsBox in our map so we can find it later
+		 * playerCardBoxes.put(p.nick, cardsBox);
+		 * 
+		 * playerUiBox.getChildren().addAll(nameLabel, betLabel, scoreLabel, cardsBox);
+		 * playersContainer.getChildren().add(playerUiBox); }
+		 */
+
+		// Dealer
+		Player dealer = game.getAllPlayers()[game.getNumPlayers()];
+
+		Label dealerNameLabel = new Label(dealer.nick);
+		Label dealerScoreLabel = new Label("Score: " + dealer.score);
+
+		HBox dealerCardsBox = new HBox(-20);
+		playerDeckContainers.put("Dealer", dealerCardsBox);
+		game.setPlayerDeckContainers(playerDeckContainers);
+
+		dealerContainer.getChildren().addAll(dealerNameLabel, dealerScoreLabel, dealerCardsBox);
+	}
 
 	private void appendToConsole(String message) {
 		if (consoleLog.getText().isEmpty()) {
