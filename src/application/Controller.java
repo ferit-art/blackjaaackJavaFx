@@ -7,10 +7,6 @@ import java.util.HashMap;
 import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -18,11 +14,12 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 
 // 	Current notes:
+
+//	The view of the dealer + players, including the decks with cards and nicknames. When giving the player a new splitdeck 
+//	in splitAction, the method should add another deck into the HBox.
 
 // 	EventListeners to the double down and stand buttons,
 // 	including the implamentation of the code from the previous version.
@@ -33,7 +30,7 @@ import javafx.util.Duration;
 
 //	Start a vscode (for home-pc) and a eclipse-branch for the blackjaaackJavaFx project when time is sufficient.
 
-//	If time is sufficient, animations would be nice...
+//	If time is sufficient, animations would be nice... (Although other exams and such have more priority)
 
 public class Controller {
 	public static Game game = new Game();
@@ -358,13 +355,15 @@ public class Controller {
 		Player dealer = game.getAllPlayers()[game.getNumPlayers()];
 
 		Label dealerNameLabel = new Label(dealer.nick);
-		Label dealerScoreLabel = new Label("Score: " + dealer.score);
+		dealerNameLabel.setStyle("-fx-font-weight: bolder; -fx-font-size: 20px;");
 
-		HBox dealerCardsBox = new HBox(-20);
+		HBox dealerCardsBox = new HBox(-10);
+		dealerCardsBox.setAlignment(javafx.geometry.Pos.CENTER); // Centering the content
+		
 		playerDeckContainers.put("Dealer", dealerCardsBox);
 		game.setPlayerDeckContainers(playerDeckContainers);
 
-		dealerContainer.getChildren().addAll(dealerNameLabel, dealerScoreLabel, dealerCardsBox);
+		dealerContainer.getChildren().addAll(dealerNameLabel, dealerCardsBox);
 	}
 
 	private void appendToConsole(String message) {
