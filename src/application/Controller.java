@@ -14,6 +14,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
 // 	Current notes:
@@ -38,7 +39,7 @@ public class Controller {
 	// UI objects
 
 	@FXML
-	ScrollPane consoleScrollPane;
+	ScrollPane consoleScrollPane;        
 	@FXML
 	Label betLabel;
 	@FXML
@@ -103,6 +104,7 @@ public class Controller {
 				game.getAllPlayers()[i].nick = "Player " + (i + 1);
 			}
 		}
+
 		int lastHumanPlayerIndex = game.getNumPlayers() - 1;
 		game.setLastHumanPlayer(game.getAllPlayers()[lastHumanPlayerIndex]);
 
@@ -264,9 +266,10 @@ public class Controller {
 		String output = null;
 
 		if (player.nick.equals("Dealer")) {
+
 			return;
 		} else if (!resources.splitAble(player)) {
-			output = "Every player can split hands only 1 time...\n" + player.nick
+			output = "\n" + "Every player can split hands only 1 time...\n" + player.nick
 					+ " has to have 2 cards of the same value in his hand to be able to split..." + "\n";
 
 		} else {
@@ -283,7 +286,26 @@ public class Controller {
 			output += "\n" + "\n" + "The total value of " + player.nick + "'s hand: " + player.score;
 			output += "\n" + "The total value of " + player.nick + "'s split hand: " + player.splitScore + "\n";
 
-			game.setCurrentPlayerIndex(game.getCurrentPlayerIndex() + 1);
+			Player lastHumanPlayer = game.getLastHumanPlayer();
+
+			if (player.nick.equals(lastHumanPlayer.nick)) {
+
+				Player dealer = game.getAllPlayers()[game.getNumPlayers()];
+				resources.hit(dealer, dealer.deck);
+
+				String dealerOutput = dealer.nick + " hit!\n" + dealer.nick + "'s card this round: " + dealer.card
+						+ "\n" + "The amount of cards in " + dealer.nick + "'s deck: " + dealer.deck.size() + "\n"
+						+ "The total value of " + dealer.nick + "'s hand: " + dealer.score + "\n";
+
+				game.setCurrentPlayerIndex(0);
+				PauseTransition pause = new PauseTransition(Duration.seconds(0.1));
+				pause.setOnFinished(event -> {
+					appendToConsole(dealerOutput);
+				});
+				pause.play();
+			} else {
+				game.setCurrentPlayerIndex(game.getCurrentPlayerIndex() + 1);
+			}
 		}
 		appendToConsole(output);
 	}
@@ -359,9 +381,17 @@ public class Controller {
 
 		HBox dealerCardsBox = new HBox(-10);
 		dealerCardsBox.setAlignment(javafx.geometry.Pos.CENTER); // Centering the content
-		
+
 		playerDeckContainers.put("Dealer", dealerCardsBox);
 		game.setPlayerDeckContainers(playerDeckContainers);
+
+		VBox dealerVBox = new VBox(10);
+		dealerVBox.setAlignment(javafx.geometry.Pos.CENTER);
+		dealerVBox.getChildren().addAll(dealerNameLabel, dealerCardsBox);
+
+		dealerContainer.setAlignment(javafx.geometry.Pos.CENTER);
+		dealerContainer.getChildren().clear(); // Clears out old duplicates if you revisit the scene
+		dealerContainer.getChildren().add(dealerVBox);
 
 		dealerContainer.getChildren().addAll(dealerNameLabel, dealerCardsBox);
 	}
