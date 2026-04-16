@@ -21,9 +21,12 @@ import javafx.util.Duration;
 
 //	The view of the dealer + players, including the decks with cards and nicknames. When giving the player a new splitdeck 
 //	in splitAction, the method should add another deck into the HBox.
+//	Dealer's is halvdone
 
 // 	EventListeners to the double down and stand buttons,
 // 	including the implamentation of the code from the previous version.
+//	Double down eventListener is done except for the problem with splitHasStood and the message for the splitTurn after the 
+// 	normal one (not always but most often).
 
 // 	The implementation of bust and blackjack (21), as well as other outcomes like tie and double-downed win.
 
@@ -39,7 +42,7 @@ public class Controller {
 	// UI objects
 
 	@FXML
-	ScrollPane consoleScrollPane;        
+	ScrollPane consoleScrollPane;
 	@FXML
 	Label betLabel;
 	@FXML
@@ -186,7 +189,7 @@ public class Controller {
 
 	public void hitAction(ActionEvent e) {
 		Player player = game.getAllPlayers()[game.getCurrentPlayerIndex()];
-		String output = null;
+		String output = "";
 
 		if (!player.nick.equals("Dealer") && !player.splitTurn && !player.hasStood) {
 
@@ -200,31 +203,16 @@ public class Controller {
 
 			output += "The total value of " + player.nick + "'s hand: " + player.score + "\n";
 
-			if (player.hasSplit) {
+			if (player.hasSplit && !player.splitTurn) {
 
-				output += "\n" + player.nick + "'s split turn:";
+				output += "\n" + player.nick + "'s split turn:" + "\n";
 				player.splitTurn = true;
 
-			} else if (player.nick.equals(game.getLastHumanPlayer().nick)) {
-
-				Player dealer = game.getAllPlayers()[game.getNumPlayers()];
-				resources.hit(dealer, dealer.deck);
-
-				String dealerOutput = dealer.nick + " hit!\n" + dealer.nick + "'s card this round: " + dealer.card
-						+ "\n" + "The amount of cards in " + dealer.nick + "'s deck: " + dealer.deck.size() + "\n"
-						+ "The total value of " + dealer.nick + "'s hand: " + dealer.score + "\n";
-
-				game.setCurrentPlayerIndex(0);
-				PauseTransition pause = new PauseTransition(Duration.seconds(0.1));
-				pause.setOnFinished(event -> {
-					appendToConsole(dealerOutput);
-				});
-				pause.play();
-
 			} else {
-				game.setCurrentPlayerIndex(game.getCurrentPlayerIndex() + 1);
+				continuationWith(player);
 			}
-		} else if (player.splitTurn) {
+
+		} else if (player.splitTurn && !player.splitHasStood) {
 
 			player.splitTurn = false;
 
@@ -232,38 +220,20 @@ public class Controller {
 
 			output = player.nick + " hit!\n";
 
-			output += player.nick + "'s drawn card this round: " + player.card + "\n";
+			output += player.nick + "'s drawn card this round: " + player.splitCard + "\n";
 
 			output += "The amount of cards in " + player.nick + "'s splitted deck: " + player.splitDeck.size() + "\n";
 
 			output += "The total value of " + player.nick + "'s splitted hand: " + player.splitScore + "\n";
 
-			if (player.nick.equals(game.getLastHumanPlayer().nick)) {
-
-				Player dealer = game.getAllPlayers()[game.getNumPlayers()];
-				resources.hit(dealer, dealer.deck);
-
-				String dealerOutput = dealer.nick + " hit!\n" + dealer.nick + "'s card this round: " + dealer.card
-						+ "\n" + "The amount of cards in " + dealer.nick + "'s deck: " + dealer.deck.size() + "\n"
-						+ "The total value of " + dealer.nick + "'s hand: " + dealer.score + "\n";
-
-				game.setCurrentPlayerIndex(0);
-				PauseTransition pause = new PauseTransition(Duration.seconds(0.1));
-				pause.setOnFinished(event -> {
-					appendToConsole(dealerOutput);
-				});
-				pause.play();
-
-			} else {
-				game.setCurrentPlayerIndex(game.getCurrentPlayerIndex() + 1);
-			}
+			continuationWith(player);
 		}
 		appendToConsole(output);
 	}
 
 	public void splitAction(ActionEvent e) {
 		Player player = game.getAllPlayers()[game.getCurrentPlayerIndex()];
-		String output = null;
+		String output = "";
 
 		if (player.nick.equals("Dealer")) {
 
@@ -273,7 +243,6 @@ public class Controller {
 					+ " has to have 2 cards of the same value in his hand to be able to split..." + "\n";
 
 		} else {
-
 			resources.split(player);
 
 			output = "\n" + "Split action with two " + player.splitCard + "s is taken" + "\n";
@@ -286,38 +255,55 @@ public class Controller {
 			output += "\n" + "\n" + "The total value of " + player.nick + "'s hand: " + player.score;
 			output += "\n" + "The total value of " + player.nick + "'s split hand: " + player.splitScore + "\n";
 
-			Player lastHumanPlayer = game.getLastHumanPlayer();
-
-			if (player.nick.equals(lastHumanPlayer.nick)) {
-
-				Player dealer = game.getAllPlayers()[game.getNumPlayers()];
-				resources.hit(dealer, dealer.deck);
-
-				String dealerOutput = dealer.nick + " hit!\n" + dealer.nick + "'s card this round: " + dealer.card
-						+ "\n" + "The amount of cards in " + dealer.nick + "'s deck: " + dealer.deck.size() + "\n"
-						+ "The total value of " + dealer.nick + "'s hand: " + dealer.score + "\n";
-
-				game.setCurrentPlayerIndex(0);
-				PauseTransition pause = new PauseTransition(Duration.seconds(0.1));
-				pause.setOnFinished(event -> {
-					appendToConsole(dealerOutput);
-				});
-				pause.play();
-			} else {
-				game.setCurrentPlayerIndex(game.getCurrentPlayerIndex() + 1);
-			}
+			continuationWith(player);
 		}
 		appendToConsole(output);
 	}
 
 	public void doubleDownAction(ActionEvent e) {
 		Player player = game.getAllPlayers()[game.getCurrentPlayerIndex()];
-		resources.doubleDown(player);
+		String output = "";
 
-		String output = player.nick + " doubled down!";
+		if (!player.nick.equals("Dealer") && !player.splitTurn && !player.hasStood) {
+			
+			resources.doubleDown(player);
 
-		output += player.nick + "'s bet now is " + player.bet;
-		resources.hit(player, player.deck);
+			output = player.nick + " doubled down!\n";
+			
+			output += player.nick + "'s bet now is: " + player.bet + "\n";
+
+			output += player.nick + "'s drawn card this round: " + player.card + "\n";
+
+			output += "The amount of cards in " + player.nick + "'s deck: " + player.deck.size() + "\n";
+
+			output += "The total value of " + player.nick + "'s hand: " + player.score + "\n";
+
+			if (player.hasSplit) {
+
+				output += "\n" + player.nick + "'s split turn:" + "\n";
+				player.splitTurn = true;
+			} else {
+				continuationWith(player);
+			}
+
+		} else if (player.splitTurn && !player.splitHasStood) {
+
+			resources.doubleDown(player);
+			player.splitHasStood = true;
+
+			output = player.nick + " doubled down with their split deck!\n";
+			
+			output += player.nick + "'s bet now is: " + player.bet + "\n";
+
+			output += player.nick + "'s drawn card this round: " + player.splitCard + "\n";
+
+			output += "The amount of cards in " + player.nick + "'s deck: " + player.splitDeck.size() + "\n";
+
+			output += "The total value of " + player.nick + "'s hand: " + player.splitScore + "\n";
+
+			continuationWith(player);
+		}
+		appendToConsole(output);
 	}
 
 	public void standAction(ActionEvent e) {
@@ -334,9 +320,11 @@ public class Controller {
 		}
 	}
 
+	//	Navigation event listeners 
+	
 	public void goBack(ActionEvent e) throws IOException {
 		resetGame();
-		sceneController.sceneHistory.pop(); // Erase the current scene
+		sceneController.sceneHistory.pop(); 
 
 		String fxmlFile = sceneController.sceneHistory.peek();
 		sceneController.switchScene(e, fxmlFile);
@@ -349,6 +337,29 @@ public class Controller {
 	}
 
 	// Helper methods
+
+	public void continuationWith(Player player) {
+		Player lastHumanPlayer = game.getLastHumanPlayer();
+
+		if (player.nick.equals(lastHumanPlayer.nick)) {
+
+			Player dealer = game.getAllPlayers()[game.getNumPlayers()];
+			resources.hit(dealer, dealer.deck);
+
+			String dealerOutput = dealer.nick + " hit!\n" + dealer.nick + "'s card this round: " + dealer.card + "\n"
+					+ "The amount of cards in " + dealer.nick + "'s deck: " + dealer.deck.size() + "\n"
+					+ "The total value of " + dealer.nick + "'s hand: " + dealer.score + "\n";
+
+			game.setCurrentPlayerIndex(0);
+			PauseTransition pause = new PauseTransition(Duration.seconds(0.1));
+			pause.setOnFinished(event -> {
+				appendToConsole(dealerOutput);
+			});
+			pause.play();
+		} else {
+			game.setCurrentPlayerIndex(game.getCurrentPlayerIndex() + 1);
+		}
+	}
 
 	public void setupView() {
 		HashMap<String, HBox> playerDeckContainers = game.getPlayerDeckContainers();
@@ -380,7 +391,7 @@ public class Controller {
 		dealerNameLabel.setStyle("-fx-font-weight: bolder; -fx-font-size: 20px;");
 
 		HBox dealerCardsBox = new HBox(-10);
-		dealerCardsBox.setAlignment(javafx.geometry.Pos.CENTER); // Centering the content
+		dealerCardsBox.setAlignment(javafx.geometry.Pos.CENTER); 
 
 		playerDeckContainers.put("Dealer", dealerCardsBox);
 		game.setPlayerDeckContainers(playerDeckContainers);
@@ -434,7 +445,7 @@ public class Controller {
 
 		game.setAllPlayers(new Player[0]);
 		game.setNumPlayers(1); // Because the min amount of players is 1
-		game.setCurrentPlayerIndex(-1); // The player amount is not given in the start / game hasn't started yet
+		game.setCurrentPlayerIndex(-1); // The player amount is not given in the start => game hasn't started yet
 
 		try (FileWriter writer = new FileWriter("player_bets.txt", false)) {
 			writer.write(""); // Empty file

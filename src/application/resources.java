@@ -69,16 +69,13 @@ public class resources {
 		}
 	}
 
-	public static boolean doubleDown(Player player) {
-		if (player.originalBet == 0) {
-			player.originalBet = player.bet; // Fallback if originalBet wasn't set properly
-		}
-		player.bet = player.originalBet * 2;
+	public static void doubleDown(Player player) {
+		
+		player.bet = player.bet* 2;
 		player.hasDoubledDown = true;
-		System.out.println(player.nick + "'s bet now is " + player.bet);
+		
 		hit(player, player.deck);
-		player.hasStood = true; // Set directly instead of calling stand
-		return true;
+		player.hasStood = true;
 	}
 
 	public static void split(Player player) {
@@ -102,7 +99,7 @@ public class resources {
 
 	// Extra
 
-	// choice method is now implemented directly inside of the controller file
+	// choice method is now implemented inside of the controller file
 	// depending on the action taken.
 
 	public static void choice(Player player, ArrayList<String> deck, boolean hasStood, int score, Scanner scanner) {
