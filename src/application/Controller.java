@@ -227,6 +227,9 @@ public class Controller {
 			output += "The total value of " + player.nick + "'s splitted hand: " + player.splitScore + "\n";
 
 			continuationWith(player);
+			
+		} else {
+			output += "\n" + "Error with turn automation, kindly contact the maker..." + "\n";
 		}
 		appendToConsole(output);
 	}
@@ -239,8 +242,10 @@ public class Controller {
 
 			return;
 		} else if (!resources.splitAble(player)) {
+			
 			output = "\n" + "Every player can split hands only 1 time...\n" + player.nick
-					+ " has to have 2 cards of the same value in his hand to be able to split..." + "\n";
+					+ " has to have 2 cards of the same value in his hand to be able to split..." + "\n"
+					+ "\n" + player.nick + " apparently can not split..." + "\n";
 
 		} else {
 			resources.split(player);
@@ -250,9 +255,9 @@ public class Controller {
 			output += "\n" + player.nick + " split and hit 1 time for both of their decks!" + "\n";
 
 			output += "\n" + "The amount of cards in " + player.nick + "'s splitted deck: " + player.splitDeck.size();
-			output += "\n" + "The amount of cards in " + player.nick + "'s deck: " + player.deck.size();
-
-			output += "\n" + "\n" + "The total value of " + player.nick + "'s hand: " + player.score;
+			output += "\n" + "The amount of cards in " + player.nick + "'s deck: " + player.deck.size() + "\n";
+			
+			output += "\n" + "The total value of " + player.nick + "'s hand: " + player.score;
 			output += "\n" + "The total value of " + player.nick + "'s split hand: " + player.splitScore + "\n";
 
 			continuationWith(player);
