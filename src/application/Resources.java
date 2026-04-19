@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.Scanner;
 
-public class resources {
+public class Resources {
 
 	// Lists
 
@@ -52,34 +52,42 @@ public class resources {
 		addCard(player, deck, drawnCard);
 	}
 
-	public static void stand(Player player, int score) {
+	public static void stand(Player player, ArrayList<String> deck) {
 
-		if (player.nick.equals("Dealer")) {
+		if (deck != player.splitDeck) {
+			
 			player.hasStood = true;
-
+			player.splitTurn = false;
 		} else {
-			if (player.splitTurn) {
-				player.splitHasStood = true;
-				System.out.println(
-						"\n" + player.nick + " stands with " + score + " as the total value for the split hand");
-			} else {
-				player.hasStood = true;
-				System.out.println("\n" + player.nick + " stands with " + score + " as the total value");
-			}
+			player.splitHasStood = true;
 		}
 	}
 
 	public static void doubleDown(Player player) {
-		
-		player.bet = player.bet* 2;
-		player.hasDoubledDown = true;
-		
-		hit(player, player.deck);
-		player.hasStood = true;
+
+		if (!player.splitTurn) {
+
+			player.bet = player.bet * 2;
+			player.hasDoubledDown = true;
+
+			hit(player, player.deck);
+			player.hasStood = true;
+
+		} else {
+
+			player.splitBet = player.bet * 2;
+			player.splitHasDoubledDown = true;
+
+			hit(player, player.splitDeck);
+			player.splitHasStood = true;
+		}
 	}
 
 	public static void split(Player player) {
+
+		player.splitBet = player.bet;
 		player.hasSplit = true;
+
 		int splitCardValue;
 
 		if (sCards.containsKey(player.splitCard) == true) {
@@ -99,53 +107,12 @@ public class resources {
 
 	// Extra
 
-	// choice method is now implemented inside of the controller file
-	// depending on the action taken.
-
-	public static void choice(Player player, ArrayList<String> deck, boolean hasStood, int score, Scanner scanner) {
-		System.out.println("\nWhat now " + player.nick + " ?\n"
-				+ "You can hit, stand, double down or split with your hand/split-hand");
-
-		if (deck == player.splitDeck) {
-			player.splitTurn = true;
-		} else if (deck == player.deck) {
-			player.choice = true;
-		}
-
-		String action = scanner.next();
-		scanner.nextLine();
-		switch (action.toLowerCase()) {
-		case "hit":
-			hit(player, deck);
-			break;
-		case "stand":
-			if (player.choice) {
-				stand(player, score);
-			} else if (player.splitTurn) {
-				stand(player, score);
-			}
-			break;
-		case "double":
-			if (!player.hasStood) {
-				doubleDown(player);
-			}
-			break;
-		case "split":
-			if (!player.hasStood && !player.hasSplit) {
-				split(player);
-			}
-			break;
-		default:
-			System.out.println("Invalid action!");
-		}
-	}
-
 	public static boolean splitAble(Player player) {
 
 		if (player.hasSplit || player.hasStood) {
 			return false;
 		}
-		
+
 		String firstCard = null;
 		String secondCard = null;
 
@@ -170,8 +137,8 @@ public class resources {
 		deck.add(drawnCard);
 
 		int cardValue;
-		if (resources.sCards.containsKey(drawnCard)) {
-			cardValue = resources.sCards.get(drawnCard);
+		if (Resources.sCards.containsKey(drawnCard)) {
+			cardValue = Resources.sCards.get(drawnCard);
 		} else {
 			cardValue = Integer.parseInt(drawnCard);
 		}
@@ -181,21 +148,6 @@ public class resources {
 		} else {
 			player.score = player.score + cardValue;
 		}
-
-		/*
-		 * deck.add(player.card);
-		 * 
-		 * if (resources.sCards.containsKey(player.card) == true) { player.score =
-		 * player.score + resources.sCards.get(player.card); } else { player.score =
-		 * player.score + Integer.parseInt(player.card); }
-		 * 
-		 * if (player.hasSplit) { deck.add(player.splitCard);
-		 * 
-		 * if (resources.sCards.containsKey(player.card) == true) { player.splitScore =
-		 * player.splitScore + resources.sCards.get(player.splitCard); } else {
-		 * player.splitScore = player.splitScore + Integer.parseInt(player.splitCard); }
-		 * }
-		 */
 	}
 
 	public static ArrayList<Player> theWinner(Player[] allPlayers) {

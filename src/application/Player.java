@@ -6,10 +6,9 @@ public class Player {
 	public ArrayList<String> deck = new ArrayList<String>();
 	public ArrayList<String> splitDeck = new ArrayList<String>();
 	
+	// Normal variables per player
 	public int bet;
 	public int score;
-	public int splitScore;
-	public int originalBet = 0;
 
 	public String nick;
 	public String card;
@@ -22,4 +21,8 @@ public class Player {
 	public boolean hasSplit = false;
 	public boolean hasWon = false;
 	public boolean hasDoubledDown = false;
+	public boolean splitHasDoubledDown = false;
+	
+	public int splitBet;
+	public int splitScore;
 }
