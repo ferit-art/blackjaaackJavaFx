@@ -25,11 +25,6 @@ import javafx.util.Duration;
 //	in splitAction, the method should add another deck into the HBox.
 //	Dealer's hbox is halvdone, card visuals are needed.
 
-// 	EventListeners to the double down and stand buttons,
-// 	including the implamentation of the code from the previous version.
-//	Double down eventListener is done except for the problem with splitHasStood and the message for the splitTurn after the 
-// 	normal one (not always but most often).
-
 // 	The implementation of bust and blackjack (21), as well as other outcomes like tie and double-downed win.
 
 // 	It is alright to have much code but write new methods so that the event handler methods can be read in english.
@@ -37,8 +32,6 @@ import javafx.util.Duration;
 //	Start a vscode (for home-pc) and a eclipse-branch for the blackjaaackJavaFx project when time is sufficient.
 
 //	If time is sufficient, animations would be nice... (Although other exams and such have more priority)
-
-//	Add splitHasStrood = true to the doubledown action
 
 public class Controller {
 	public static Game game = new Game();
@@ -206,7 +199,7 @@ public class Controller {
 
 			output += "The total value of " + player.nick + "'s hand: " + player.score + "\n";
 
-			if (player.hasSplit && !player.splitTurn) {
+			if (player.hasSplit) {
 
 				output += "\n" + player.nick + "'s split turn:" + "\n";
 				player.splitTurn = true;
@@ -214,7 +207,6 @@ public class Controller {
 			} else {
 				continuationWith(player);
 			}
-
 		} else if (player.splitTurn && !player.splitHasStood) {
 
 			player.splitTurn = false;
@@ -328,14 +320,13 @@ public class Controller {
 			Resources.stand(player, player.deck);
 			output = "\n" + player.nick + " stands with " + player.score + " as their total score" + "\n";
 
-			if (player.hasSplit && !player.splitTurn) {
+			if (player.hasSplit) {
 
 				output += "\n" + player.nick + "'s split turn:" + "\n";
 				player.splitTurn = true;
 
-			} else {
-				continuationWith(player);
 			}
+			continuationWith(player);
 		} else if (player.splitTurn && !player.splitHasStood) {
 
 			Resources.stand(player, player.splitDeck);
@@ -371,6 +362,7 @@ public class Controller {
 	public void continuationWith(Player player) {
 		Player lastHumanPlayer = game.getLastHumanPlayer();
 		String output;
+		Player nextPlayer = null;
 
 		if (player.nick.equals(lastHumanPlayer.nick)) {
 
@@ -382,6 +374,7 @@ public class Controller {
 					+ "The total value of " + dealer.nick + "'s hand: " + dealer.score + "\n";
 
 			game.setCurrentPlayerIndex(0);
+			nextPlayer = game.getAllPlayers()[game.getCurrentPlayerIndex()];
 
 			PauseTransition pause = new PauseTransition(Duration.seconds(0.1));
 			pause.setOnFinished(event -> {
@@ -391,6 +384,10 @@ public class Controller {
 
 		} else {
 			game.setCurrentPlayerIndex(game.getCurrentPlayerIndex() + 1);
+		}
+		
+		if (nextPlayer.hasSplit && nextPlayer.hasStood) {
+			nextPlayer.splitTurn = true;
 		}
 	}
 

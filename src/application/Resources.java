@@ -74,10 +74,10 @@ public class Resources {
 			player.hasStood = true;
 
 		} else {
-
 			player.splitBet = player.bet * 2;
 			player.splitHasDoubledDown = true;
-
+			player.splitTurn = false;
+			
 			hit(player, player.splitDeck);
 			player.splitHasStood = true;
 		}
