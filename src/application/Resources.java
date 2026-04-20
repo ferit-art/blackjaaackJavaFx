@@ -1,5 +1,7 @@
 package application;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -55,7 +57,7 @@ public class Resources {
 	public static void stand(Player player, ArrayList<String> deck) {
 
 		if (deck != player.splitDeck) {
-			
+
 			player.hasStood = true;
 			player.splitTurn = false;
 		} else {
@@ -77,7 +79,7 @@ public class Resources {
 			player.splitBet = player.bet * 2;
 			player.splitHasDoubledDown = true;
 			player.splitTurn = false;
-			
+
 			hit(player, player.splitDeck);
 			player.splitHasStood = true;
 		}
@@ -106,6 +108,63 @@ public class Resources {
 	}
 
 	// Extra
+
+	public static String scoreChecks(Player player) {
+
+		if (player.score > 21) {
+
+			String bust = "Bust";
+			return bust;
+
+		} else if (player.score == 21) {
+
+			String blackJ = "Blackjack";
+			return blackJ;
+		} else {
+			
+		}
+	}
+
+	public static void resetGame() {
+		for (int i = 0; i < Controller.game.getNumPlayers(); i++) {
+			Player p = Controller.game.getAllPlayers()[i];
+
+			if (Controller.game.getAllPlayers()[i] != null) {
+				p.deck.clear();
+				p.splitDeck.clear();
+
+				p.score = 0;
+				p.splitScore = 0;
+				p.bet = 0;
+				p.card = null;
+				p.splitCard = null;
+
+				p.hasStood = false;
+				p.splitHasStood = false;
+				p.hasSplit = false;
+				p.hasDoubledDown = false;
+				p.hasWon = false;
+				p.splitTurn = false;
+			}
+		}
+
+		Controller.game.setAllPlayers(new Player[0]);
+		Controller.game.setNumPlayers(1); // Because the min amount of players is 1
+		Controller.game.setCurrentPlayerIndex(-1); // The player amount is not given in the start => game hasn't started
+													// yet
+
+		try (FileWriter writer = new FileWriter("player_bets.txt", false)) {
+			writer.write(""); // Empty file
+			writer.flush();
+		} catch (Exception ignored) {
+		}
+
+		try {
+			new File("player_bets.txt").delete();
+		} catch (Exception ignored) {
+			System.out.println("crash");
+		}
+	}
 
 	public static boolean splitAble(Player player) {
 

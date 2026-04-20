@@ -1,10 +1,7 @@
 package application;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
-
 import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -25,7 +22,8 @@ import javafx.util.Duration;
 //	in splitAction, the method should add another deck into the HBox.
 //	Dealer's hbox is halvdone, card visuals are needed.
 
-// 	The implementation of bust and blackjack (21), as well as other outcomes like tie and double-downed win.
+// 	NEXT = The implementation of bust and blackjack (21), as well as other outcomes like tie and double-downed win.
+//	=>> Added the scoreCheck() method in Resources.
 
 // 	It is alright to have much code but write new methods so that the event handler methods can be read in english.
 
@@ -344,7 +342,7 @@ public class Controller {
 	// Navigation event listeners
 
 	public void goBack(ActionEvent e) throws IOException {
-		resetGame();
+		Resources.resetGame();
 		sceneController.sceneHistory.pop();
 
 		String fxmlFile = sceneController.sceneHistory.peek();
@@ -352,7 +350,7 @@ public class Controller {
 	}
 
 	public void goHome(ActionEvent e) throws IOException {
-		resetGame();
+		Resources.resetGame();
 		sceneController.sceneHistory.clear();
 		sceneController.switchScene(e, "startScene.fxml");
 	}
@@ -385,7 +383,7 @@ public class Controller {
 		} else {
 			game.setCurrentPlayerIndex(game.getCurrentPlayerIndex() + 1);
 		}
-		
+
 		if (nextPlayer.hasSplit && nextPlayer.hasStood) {
 			nextPlayer.splitTurn = true;
 		}
@@ -446,46 +444,5 @@ public class Controller {
 
 		consoleScrollPane.layout();
 		consoleScrollPane.setVvalue(1.0); // 1.0 = bottom
-	}
-
-	private void resetGame() {
-		for (int i = 0; i < game.getNumPlayers(); i++) {
-			Player p = game.getAllPlayers()[i];
-
-			if (game.getAllPlayers()[i] != null) {
-				p.deck.clear();
-				p.splitDeck.clear();
-
-				p.score = 0;
-				p.splitScore = 0;
-				p.bet = 0;
-				p.card = null;
-				p.splitCard = null;
-
-				p.hasStood = false;
-				p.splitHasStood = false;
-				p.hasSplit = false;
-				p.hasDoubledDown = false;
-				p.hasWon = false;
-				p.splitTurn = false;
-				p.choice = false;
-			}
-		}
-
-		game.setAllPlayers(new Player[0]);
-		game.setNumPlayers(1); // Because the min amount of players is 1
-		game.setCurrentPlayerIndex(-1); // The player amount is not given in the start => game hasn't started yet
-
-		try (FileWriter writer = new FileWriter("player_bets.txt", false)) {
-			writer.write(""); // Empty file
-			writer.flush();
-		} catch (Exception ignored) {
-		}
-
-		try {
-			new File("player_bets.txt").delete();
-		} catch (Exception ignored) {
-			System.out.println("crash");
-		}
 	}
 }
