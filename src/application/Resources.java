@@ -5,7 +5,6 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
-import java.util.Scanner;
 
 public class Resources {
 
@@ -109,20 +108,42 @@ public class Resources {
 
 	// Extra
 
-	public static String scoreChecks(Player player) {
+	public static String scoreChecks(Player player, ArrayList<String> deck) {
 
-		if (player.score > 21) {
+		String bust = "Bust";
+		String blackJ = "Blackjack";
+		String error = "Problem with scoreCheck";
 
-			String bust = "Bust";
-			return bust;
+		if (deck == player.deck) { // For everyone with the primary deck sent
 
-		} else if (player.score == 21) {
+			if (player.nick == "Dealer") { // For the dealer that should stand at 17 or higher.
 
-			String blackJ = "Blackjack";
-			return blackJ;
-		} else {
+				if (player.score >= 17) {
+
+					String dealerStand = "17 as score";
+					return dealerStand;
+				}
+			} else if (player.score > 21) {
+
+				return bust;
+			} else if (player.score == 21) {
+
+				return blackJ;
+			}
+			return "Active";
 			
+		} else if (player.hasSplit && deck == player.splitDeck) { // For players with split hands and the split deck
+																	// sent
+			if (player.splitScore > 21) {
+
+				return bust;
+			} else if (player.splitScore == 21) {
+
+				return blackJ;
+			}
+			return "Active";
 		}
+		return error;
 	}
 
 	public static void resetGame() {
