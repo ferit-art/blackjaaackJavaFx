@@ -120,7 +120,7 @@ public class Resources {
 
 				if (player.score >= 17) {
 
-					String dealerStand = "17 as score";
+					String dealerStand = "17 or greater as score";
 					return dealerStand;
 				}
 			} else if (player.score > 21) {

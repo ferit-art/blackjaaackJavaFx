@@ -23,7 +23,8 @@ import javafx.util.Duration;
 //	Dealer's hbox is halvdone, card visuals are needed.
 
 // 	NEXT => The implementation of bust and blackjack (21), as well as other outcomes like tie and double-downed win.
-//	=>> Added the scoreCheck() method in Resources.
+//	=>> Problem with the automation at the end of the continuationWith() method, when dealer hits or the index is 
+//	changed, the index in allPlayers should not have stood... CONSIDER other possible outcomes too.
 
 // 	It is alright to have much code but write new methods so that the event handler methods can be read in english.
 
@@ -203,6 +204,7 @@ public class Controller {
 				player.splitTurn = true;
 
 			} else {
+				appendToConsole(output);
 				continuationWith(player);
 			}
 		} else if (player.splitTurn && !player.splitHasStood) {
@@ -219,12 +221,13 @@ public class Controller {
 
 			output += "The total value of " + player.nick + "'s splitted hand: " + player.splitScore + "\n";
 
+			appendToConsole(output);
 			continuationWith(player);
 
 		} else {
 			output += "\n" + "Error with turn automation, kindly contact the maker..." + "\n";
+			appendToConsole(output);
 		}
-		appendToConsole(output);
 	}
 
 	public void splitAction(ActionEvent e) {
@@ -324,6 +327,7 @@ public class Controller {
 				player.splitTurn = true;
 
 			}
+			appendToConsole(output);
 			continuationWith(player);
 		} else if (player.splitTurn && !player.splitHasStood) {
 
@@ -331,12 +335,13 @@ public class Controller {
 			output = "\n" + player.nick + " stands with " + player.splitScore
 					+ " as the total score for their splitted hand" + "\n";
 
+			appendToConsole(output);
 			continuationWith(player);
 		} else {
 
 			output = "\n" + "Automation error." + "\n";
+			appendToConsole(output);
 		}
-		appendToConsole(output);
 	}
 
 	// Navigation event listeners
@@ -385,18 +390,25 @@ public class Controller {
 			Player dealer = game.getAllPlayers()[game.getNumPlayers()];
 
 			if (!dealer.hasStood) {
-
 				Resources.hit(dealer, dealer.deck);
 			}
 
 			String dealerStatus = Resources.scoreChecks(dealer, dealer.deck);
 
-			if (dealerStatus.equals("Bust") || dealerStatus.equals("Blackjack") || dealerStatus.equals("17 as score")) {
+			if (dealerStatus.equals("Bust") || dealerStatus.equals("Blackjack")) {
 
 				if (!dealer.hasStood) {
-				
+
 					dealer.hasStood = true;
 					appendToConsole("\n--> " + dealer.nick + " got a " + dealerStatus + " on its hand!" + "\n");
+				}
+			} else if (dealerStatus.equals("17 or greater as score")) {
+
+				if (!dealer.hasStood) {
+
+					dealer.hasStood = true;
+					appendToConsole("\n--> " + dealer.nick + " got " + dealerStatus + " on its hand!" + "\n" + "\n"
+							+ "\n--> " + dealer.nick + " stands with " + dealer.score);
 				}
 			} else {
 				String output = dealer.nick + " hit!\n" + dealer.nick + "'s card this round: " + dealer.card + "\n"
@@ -410,11 +422,21 @@ public class Controller {
 				pause.play();
 			}
 
+			Player[] allPlayers = game.getAllPlayers();
+			for (int i = 0; i < allPlayers.length; i++) {
+				
+				if (!allPlayers[i].hasStood) {
+					game.setCurrentPlayerIndex(i);
+					break;
+				} 
+			}
+			
 			game.setCurrentPlayerIndex(0);
 			nextPlayer = game.getAllPlayers()[game.getCurrentPlayerIndex()];
 
 		} else {
 			game.setCurrentPlayerIndex(game.getCurrentPlayerIndex() + 1);
+			nextPlayer = game.getAllPlayers()[game.getCurrentPlayerIndex()];
 		}
 
 		if (nextPlayer.hasSplit && nextPlayer.hasStood) {
