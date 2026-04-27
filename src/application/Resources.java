@@ -108,11 +108,11 @@ public class Resources {
 
 	// Extra
 
-	public static String scoreChecks(Player player, ArrayList<String> deck) {
+	public static String scoreCheck(Player player, ArrayList<String> deck) {
 
-		String bust = "Bust";
-		String blackJ = "Blackjack";
-		String error = "Problem with scoreCheck";
+		String bust = "bust";
+		String blackJ = "blackjack";
+		String error = "problem with scoreCheck";
 
 		if (deck == player.deck) { // For everyone with the primary deck sent
 
@@ -130,7 +130,7 @@ public class Resources {
 
 				return blackJ;
 			}
-			return "Active";
+			return "active";
 			
 		} else if (player.hasSplit && deck == player.splitDeck) { // For players with split hands and the split deck
 																	// sent
@@ -141,7 +141,7 @@ public class Resources {
 
 				return blackJ;
 			}
-			return "Active";
+			return "active";
 		}
 		return error;
 	}
