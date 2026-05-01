@@ -1,5 +1,7 @@
 package application;
 
+import java.io.File;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
@@ -27,6 +29,19 @@ public class Main extends Application {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void stop() {
+		
+		try {
+			File saveFile = new File("player_bets.txt");
+			if (saveFile.exists()) {
+				saveFile.delete();
+			}
+		} catch (Exception e) {
+			System.out.println("Could not delete save file on exit.");
 		}
 	}
 

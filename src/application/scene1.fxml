@@ -6,9 +6,9 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="1000.0" maxWidth="1200.0" minHeight="1000.0" minWidth="1200.0" prefHeight="1000.0" prefWidth="1200.0" styleClass="application.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.Controller">
+<AnchorPane maxHeight="1000.0" maxWidth="1200.0" minHeight="1000.0" minWidth="1200.0" prefHeight="1000.0" prefWidth="1200.0" styleClass="application.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.Controller">
    <children>
-      <Label layoutX="336.0" layoutY="320.0" prefHeight="195.0" prefWidth="545.0" text="Rules outside of the normal Blackjack card game:&#10;&#10;- The actual card Ace is divided into two seperate cards, called lesser ace and greater ace which respectively equals 1 and 11.&#10;&#10;- Only the absolute highest score at the table wins. Beat the Dealer AND the other players!" wrapText="true">
+      <Label layoutX="330.0" layoutY="391.0" prefHeight="119.0" prefWidth="545.0" text="The only rule outside of the normal Blackjack card game:&#10;&#10;- The actual card Ace is divided into two seperate cards, called lesser ace and greater ace which respectively equals 1 and 11." wrapText="true">
          <font>
             <Font name="System Bold" size="17.59" />
          </font>

@@ -16,6 +16,7 @@ public class Resources {
 	// Cards
 
 	public static void setup() {
+
 		sCards.put("lesser ace", 1);
 		sCards.put("jack", 10);
 		sCards.put("queen", 10);
@@ -108,30 +109,79 @@ public class Resources {
 
 	// Extra
 
+	public static void getConsequences(Player[] allPlayers) {
+
+		Player dealer = Controller.game.getAllPlayers()[Controller.game.getNumPlayers()];
+		String dealerStatus = scoreCheck(dealer, dealer.deck);
+
+		for (Player player : allPlayers) {
+
+			if (!player.nick.equals("Dealer")) {
+
+				String status = scoreCheck(player, player.deck);
+
+				if (status.equals("blackjack")) {
+
+					player.bet = player.bet * 2.5;
+
+				} else if (dealerStatus.equals("bust") || !status.equals("bust") && player.score > dealer.score) {
+
+					player.bet = player.bet * 2;
+
+				} else {
+					if (player.score != dealer.score) {
+						player.bet = 1;
+					}
+				}
+
+				if (player.hasSplit) {
+
+					String splitStatus = scoreCheck(player, player.splitDeck);
+
+					if (splitStatus.equals("blackjack")) {
+
+						player.bet = player.bet * 2.5;
+
+					} else if (dealerStatus.equals("bust")
+							|| !splitStatus.equals("bust") && player.score > dealer.score) {
+
+						player.bet = player.bet * 2;
+
+					} else {
+
+						if (player.score != dealer.score) {
+							player.bet = 1;
+						}
+					}
+				}
+			}
+		}
+	}
+
 	public static String scoreCheck(Player player, ArrayList<String> deck) {
 
 		String bust = "bust";
 		String blackJ = "blackjack";
-		String error = "problem with scoreCheck";
+		String error = "problem with scoreCheck"; // Debug
 
 		if (deck == player.deck) { // For everyone with the primary deck sent
 
-			if (player.nick == "Dealer") { // For the dealer that should stand at 17 or higher.
+			if (player.score > 21) {
+
+				return bust;
+			} else if (player.score == 21) {
+
+				return blackJ;
+			} else if (player.nick == "Dealer") { // For the dealer that should stand at 17 or higher.
 
 				if (player.score >= 17) {
 
 					String dealerStand = "17 or greater as score";
 					return dealerStand;
 				}
-			} else if (player.score > 21) {
-
-				return bust;
-			} else if (player.score == 21) {
-
-				return blackJ;
 			}
 			return "active";
-			
+
 		} else if (player.hasSplit && deck == player.splitDeck) { // For players with split hands and the split deck
 																	// sent
 			if (player.splitScore > 21) {
@@ -148,43 +198,47 @@ public class Resources {
 
 	public static void resetGame() {
 		for (int i = 0; i < Controller.game.getNumPlayers(); i++) {
-			Player p = Controller.game.getAllPlayers()[i];
+			Player player = Controller.game.getAllPlayers()[i];
 
 			if (Controller.game.getAllPlayers()[i] != null) {
-				p.deck.clear();
-				p.splitDeck.clear();
+				player.deck.clear();
+				player.splitDeck.clear();
 
-				p.score = 0;
-				p.splitScore = 0;
-				p.bet = 0;
-				p.card = null;
-				p.splitCard = null;
+				player.score = 0;
+				player.splitScore = 0;
+				player.bet = 0;
+				player.card = null;
+				player.splitCard = null;
 
-				p.hasStood = false;
-				p.splitHasStood = false;
-				p.hasSplit = false;
-				p.hasDoubledDown = false;
-				p.hasWon = false;
-				p.splitTurn = false;
+				player.hasStood = false;
+				player.splitHasStood = false;
+				player.hasSplit = false;
+				player.hasDoubledDown = false;
+				player.splitTurn = false;
 			}
 		}
 
+		Controller.game.setGameOver(false);
 		Controller.game.setAllPlayers(new Player[0]);
 		Controller.game.setNumPlayers(1); // Because the min amount of players is 1
 		Controller.game.setCurrentPlayerIndex(-1); // The player amount is not given in the start => game hasn't started
 													// yet
+		if (!Player.betsSaved) {
 
-		try (FileWriter writer = new FileWriter("player_bets.txt", false)) {
-			writer.write(""); // Empty file
-			writer.flush();
-		} catch (Exception ignored) {
-		}
+			try (FileWriter writer = new FileWriter("player_bets.txt", false)) {
+				writer.write(""); // Empty file
+				writer.flush();
+			} catch (Exception ignored) {
+				System.out.println("\n" + "crash resetting the save file" + "\n");
+			}
 
-		try {
-			new File("player_bets.txt").delete();
-		} catch (Exception ignored) {
-			System.out.println("crash");
+			try {
+				new File("player_bets.txt").delete();
+			} catch (Exception ignored) {
+				System.out.println("\n" + "crash deleting the save file" + "\n");
+			}
 		}
+		Player.betsSaved = false;
 	}
 
 	public static boolean splitAble(Player player) {
@@ -230,24 +284,42 @@ public class Resources {
 		}
 	}
 
-	public static ArrayList<Player> theWinner(Player[] allPlayers) {
+	public static ArrayList<Player> getWinners(Player[] allPlayers, Boolean normalScore) {
+
 		ArrayList<Player> winners = new ArrayList<>();
+		Player dealer = allPlayers[allPlayers.length - 1];
 
-		int bestScore = 0;
+		if (normalScore) {
 
-		// Find best score that's not bust
-		for (Player p : allPlayers) {
-			if (p.score <= 21 && p.score > bestScore) {
-				bestScore = p.score;
+			// Loop through everyone EXCEPT the dealer
+			for (int i = 0; i < allPlayers.length - 1; i++) {
+				Player player = allPlayers[i];
+
+				if (player.score <= 21) {
+
+					if (dealer.score > 21 || player.score > dealer.score) {
+
+						winners.add(player);
+					}
+				}
+			}
+
+		} else {
+
+			for (int i = 0; i < allPlayers.length - 1; i++) {
+				Player player = allPlayers[i];
+
+				if (player.hasSplit && player.splitHasStood) {
+
+					if (player.splitScore <= 21) {
+
+						if (dealer.score > 21 || player.splitScore > dealer.score) {
+							winners.add(player);
+						}
+					}
+				}
 			}
 		}
-
-		for (Player p : allPlayers) {
-			if (p.score == bestScore && p.score <= 21) {
-				winners.add(p);
-			}
-		}
-
-		return winners; // Could be empty or 1 or multiple players
+		return winners;
 	}
 }
