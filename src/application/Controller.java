@@ -130,7 +130,9 @@ public class Controller {
 		} else {
 
 			ctrl.betLabel.setText("All bets loaded. Ready to play!");
+			ctrl.setButton.setVisible(false);
 			ctrl.betInput.setVisible(false);
+			ctrl.nextButton.setVisible(true);
 		}
 	}
 
